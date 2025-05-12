@@ -26,7 +26,6 @@ function Dashboard({ token }) {
             Authorization: `Bearer ${token}`,
           },
         });
-        console.log('Hämtade quizzes:', quizRes.data); // Logga quizen för att se om de har hämtats korrekt
         setQuizzes(quizRes.data);
       } catch (error) {
         console.error("Fel vid hämtning:", error);

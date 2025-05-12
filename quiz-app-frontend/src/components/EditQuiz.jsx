@@ -12,12 +12,15 @@ function EditQuiz({ token }) {
   useEffect(() => {
     const fetchQuiz = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/quizzes/${quizId}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setQuiz(response.data);
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_URL}/quizzes/${quizId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setQuiz(response.data.quiz); // <-- Viktigt: sätt quiz korrekt
         setLoading(false);
       } catch (error) {
         console.error("Fel vid hämtning av quiz:", error);
@@ -65,7 +68,7 @@ function EditQuiz({ token }) {
     return <div>{errorMessage}</div>;
   }
 
-  if (!Array.isArray(quiz.questions)) {
+  if (!Array.isArray(quiz.questions) || quiz.questions.length === 0) {
     return <div>Inga frågor tillgängliga.</div>;
   }
 
@@ -103,32 +106,31 @@ function EditQuiz({ token }) {
                 })
               }
             />
-            <div>
-              {question.answers &&
-                Array.isArray(question.answers) &&
-                question.answers.map((answer, answerIndex) => (
-                  <div key={answerIndex} className="sub-question-input">
-                    <input
-                      type="text"
-                      value={answer.text}
-                      onChange={(e) =>
-                        handleQuestionChange(index, {
-                          ...question,
-                          answers: question.answers.map((ans, idx) =>
-                            idx === answerIndex
-                              ? { ...ans, text: e.target.value }
-                              : ans
-                          ),
-                        })
-                      }
-                      className="sub-question-input"
-                    />
-                  </div>
-                ))}
-            </div>
+
+            {question.subQuestions?.map((subQ, subIndex) => (
+              <div key={subIndex} className="sub-question-input">
+                <input
+                  type="text"
+                  value={subQ.questionText}
+                  onChange={(e) => {
+                    const updatedSubQuestions = [...question.subQuestions];
+                    updatedSubQuestions[subIndex] = {
+                      ...subQ,
+                      questionText: e.target.value,
+                    };
+                    handleQuestionChange(index, {
+                      ...question,
+                      subQuestions: updatedSubQuestions,
+                    });
+                  }}
+                  className="sub-question-input"
+                />
+              </div>
+            ))}
           </div>
         ))}
       </form>
+
       <div className="question-buttons">
         <button type="button" onClick={handleSave} className="primary-button">
           Spara ändringar

@@ -29,7 +29,7 @@ function QuizSubmissions() {
         setSubmissions(data);
       } catch (err) {
         console.error("Fel vid hämtning av submissions:", err);
-        setError("Fel vid hämtning av submissions. Försök igen senare.");
+        setError("Fel vid hämtning.");
       }
     };
 

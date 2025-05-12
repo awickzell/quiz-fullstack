@@ -13,6 +13,7 @@ const QuizPage = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
 
+  // Hämta quizdata när komponenten laddas
   useEffect(() => {
     const fetchQuiz = async () => {
       try {
@@ -22,6 +23,7 @@ const QuizPage = () => {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
+        // Uppdatera quizdata med rätt objekt (response.data.quiz)
         setQuiz(response.data.quiz);
       } catch (err) {
         console.error("Fel vid hämtning av quiz:", err);
@@ -31,8 +33,10 @@ const QuizPage = () => {
     fetchQuiz();
   }, [quizId, token]);
 
+  // Hantera svar när index ändras
   useEffect(() => {
     if (!quiz) return;
+
     const prevAnswer = answers[currentIndex];
     setCurrentAnswer(prevAnswer?.answer || '');
     setSubAnswers(
@@ -42,6 +46,7 @@ const QuizPage = () => {
     );
   }, [currentIndex, quiz]);
 
+  // Hantera inskick av svar
   const handleAnswerSubmit = () => {
     const currentQuestion = quiz.questions[currentIndex];
     const hasSub = currentQuestion.subQuestions?.length > 0;
@@ -73,6 +78,7 @@ const QuizPage = () => {
     }
   };
 
+  // Hantera navigering till föregående fråga eller dashboard
   const handleBack = () => {
     if (currentIndex === 0) {
       navigate('/dashboard');
@@ -81,6 +87,7 @@ const QuizPage = () => {
     }
   };
 
+  // Skicka in alla svar till backend
   const submitAllAnswers = async (finalAnswers) => {
     try {
       await axios.post(
@@ -96,7 +103,10 @@ const QuizPage = () => {
     }
   };
 
+  // Om quizet inte har laddats än
   if (!quiz) return <p>Laddar quiz...</p>;
+
+  // Om användaren har skickat in sina svar
   if (submitted) {
     return (
       <div className="quiz-submitted-container">
@@ -106,8 +116,9 @@ const QuizPage = () => {
         </button>
       </div>
     );
-  }    
+  }
 
+  // Hämta aktuell fråga och subfrågor
   const currentQuestion = quiz.questions[currentIndex];
   const hasSubQuestions = currentQuestion.subQuestions?.length > 0;
 
@@ -115,7 +126,7 @@ const QuizPage = () => {
     <div className="quiz-page-container">
       <h1 className="quiz-title">{quiz.title}</h1>
       <h2>Fråga {currentIndex + 1} av {quiz.questions.length}</h2>
-  
+
       {hasSubQuestions ? (
         <div className="question-block">
           {[currentQuestion, ...currentQuestion.subQuestions].map((q, i) => (
@@ -149,13 +160,13 @@ const QuizPage = () => {
           />
         </div>
       )}
-  
+
       <div className="button-group">
         <button onClick={handleAnswerSubmit}>Svara!</button>
         <button onClick={handleBack}>Tillbaka</button>
       </div>
     </div>
-  );  
+  );
 };
 
 export default QuizPage;

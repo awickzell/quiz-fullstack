@@ -32,7 +32,7 @@ const Login = ({ setToken }) => {
 
   return (
     <div className="login-container">
-      <h2>Quized</h2>
+      <h2 className="pulse-text">Quized</h2>
       {error && <p className="error">{error}</p>}
       <form onSubmit={handleLogin}>
         <input
