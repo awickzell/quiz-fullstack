@@ -15,12 +15,9 @@ router.post('/register', async (req, res) => {
   const existingUser = await User.findOne({ name });
   if (existingUser) return res.status(400).json({ message: 'Användarnamn redan upptaget.' });
 
-  const user = new User({
-    name,
-    password,
-  });
-
+  const user = new User({ name, password });
   await user.save();
+
   res.status(201).json({ message: 'Användare skapad!' });
 });
 
@@ -36,11 +33,10 @@ router.post('/login', async (req, res) => {
   res.json({
     message: 'Inloggning lyckades',
     accessToken: user.accessToken,
-    role: user.role, // Lägg till role för frontend-användning
   });
 });
 
-// 🟢 Hämta profil (med autentisering)
+// 🟢 Hämta användarprofil
 router.get('/profile', authenticateUser, async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
@@ -49,7 +45,6 @@ router.get('/profile', authenticateUser, async (req, res) => {
     }
     res.json({
       name: user.name,
-      role: user.role,
       _id: user._id,
     });
   } catch (err) {
@@ -57,12 +52,11 @@ router.get('/profile', authenticateUser, async (req, res) => {
   }
 });
 
-// 🟢 Hämta aktuell användare (endast användare som är inloggade kan hämta sina uppgifter)
+// 🟢 Hämta aktuell användare
 router.get('/me', authenticateUser, (req, res) => {
   res.json({
     _id: req.user._id,
     name: req.user.name,
-    role: req.user.role,
   });
 });
 

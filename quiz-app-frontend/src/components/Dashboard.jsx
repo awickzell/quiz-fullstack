@@ -1,26 +1,26 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import ActionButton from "./ActionButton";
+import SearchBar from "./SearchBar";
 
-function Dashboard({ token }) {
+function Dashboard({ token, onLogout }) {
   const [quizzes, setQuizzes] = useState([]);
   const [message, setMessage] = useState("");
   const [userName, setUserName] = useState("");
+  const [userId, setUserId] = useState("");  // Lägg till användarens ID
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUserAndQuizzes = async () => {
       try {
-        // Hämta användarnamn från token
         const userRes = await axios.get(`${import.meta.env.VITE_API_URL}/users/me`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
         setUserName(userRes.data.name);
+        setUserId(userRes.data._id);
 
-        // Hämta quiz
         const quizRes = await axios.get(`${import.meta.env.VITE_API_URL}/quizzes`, {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -34,12 +34,6 @@ function Dashboard({ token }) {
 
     fetchUserAndQuizzes();
   }, [token]);
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/");
-    window.location.reload();
-  };
 
   const handleDelete = async (quizId) => {
     const confirm = window.confirm("Är du säker på att du vill radera detta quiz?");
@@ -61,57 +55,49 @@ function Dashboard({ token }) {
 
   return (
     <div className="dashboard-container">
-      <h2>Quized</h2>
+      <h2>Välkommen, {userName}</h2>
+      <SearchBar quizzes={quizzes} />
       {message && <p className="message">{message}</p>}
-      <ul>
-        {quizzes.map((quiz) => {
-          const isCreator = quiz.createdBy?.name === userName;
+      <button onClick={() => navigate("/create-quiz")}>Skapa nytt quiz</button>
+      <button onClick={onLogout}>Logga ut</button>
 
-          return (
-            <li key={quiz._id}>
-              <div className="quiz-info">
+      {quizzes.length === 0 ? (
+        <p>Inga quiz tillgängliga.</p>
+      ) : (
+        <ul className="quiz-list">
+          {quizzes.map((quiz) => {
+            const isCreator = quiz.createdBy?._id === userId;  // Jämför mot användarens ID
+
+            return (
+              <li key={quiz._id} className="quiz-item">
                 <strong>{quiz.title}</strong>
-                {" | "}
-                <span className="quiz-creator">
-                  {quiz.createdBy?.name ? `av ${quiz.createdBy.name}` : "Skapare ej tillgänglig"}
-                </span>
-              </div>
-              <div className="quiz-actions">
-                <ActionButton
-                  label="Spela"
-                  onClick={() => navigate(`/quizzes/${quiz._id}`)}
-                  styleClass="play-btn"
-                />
-                {isCreator && (
-                  <>
-                    <ActionButton
-                      label="Redigera"
-                      onClick={() => navigate(`/edit-quiz/${quiz._id}`)}
-                      styleClass="edit-btn"
-                    />
-                    <ActionButton
-                      label="Rätta Quiz"
-                      onClick={() => navigate(`/quizzes/${quiz._id}/submissions`)}
-                      styleClass="grade-btn"
-                    />
-                    <ActionButton
-                      label="Radera"
-                      onClick={() => handleDelete(quiz._id)}
-                      styleClass="delete-btn"
-                    />
-                  </>
-                )}
-              </div>
-            </li>
-          );
-        })}
-      </ul>
-      <ActionButton
-        label="Skapa nytt quiz"
-        onClick={() => navigate("/create-quiz")}
-        styleClass="create-btn"
-      />
-      <ActionButton label="Logga ut" onClick={handleLogout} styleClass="logout-btn" />
+
+                <p>{quiz.createdBy?.name ? `skapat av ${quiz.createdBy.name}` : "Okänd skapare"}</p>
+
+                <div className="quiz-actions">
+                  <button onClick={() => navigate(`/quizzes/${quiz._id}`)}>
+                    Spela
+                  </button>
+
+                  {isCreator && (
+                    <>
+                      <button onClick={() => navigate(`/edit-quiz/${quiz._id}`)}>
+                        Redigera
+                      </button>
+                      <button onClick={() => handleDelete(quiz._id)}>
+                        Radera
+                      </button>
+                      <button onClick={() => navigate(`/quizzes/${quiz._id}/submissions`)}>
+                        Rätta
+                      </button>
+                    </>
+                  )}
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      )}
     </div>
   );
 }

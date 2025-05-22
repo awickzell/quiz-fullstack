@@ -2,34 +2,46 @@ import mongoose from 'mongoose';
 
 const quizSchema = new mongoose.Schema({
   title: { type: String, required: true },
-  questions: [
-    {
-      questionText: { type: String, required: true },
-      subQuestions: [
-        {
-          questionText: { type: String },
-        },
-      ],
-    },
-  ],
-  createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  createdAt: {
-    type: Date,
-    default: Date.now,
+  questions: {
+    type: [
+      {
+        questionText: { type: String, required: true },
+        type: { type: String, enum: ['text', 'multipleChoice', 'image'], default: 'text' },
+        options: [String],
+        imageUrl: String,
+        subQuestions: [
+          {
+            questionText: String,
+          },
+        ],
+      }
+    ],
+    validate: [arr => arr.length > 0, 'Minst en fråga krävs.']
   },
-  submissions: [ 
+  createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+  },
+  submissions: [
     {
       playerName: String,
       answers: [
         {
-          question: String,
+          questionText: String,      // Ändrat från "question" till "questionText"
           answer: String,
+          subAnswers: [
+            {
+              subQuestionText: String,
+              subAnswer: String,
+            }
+          ],
         },
       ],
-      submittedAt: { type: Date, default: Date.now }
-    }
-  ]
-});
+      submittedAt: { type: Date, default: Date.now },
+    },
+  ],
+}, { timestamps: true }); // Automatiskt createdAt och updatedAt
 
 const Quiz = mongoose.model('Quiz', quizSchema);
 

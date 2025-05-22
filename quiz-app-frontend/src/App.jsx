@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import Dashboard from "./components/Dashboard";
@@ -12,7 +12,6 @@ import { useState, useEffect } from "react";
 
 function App() {
   const [token, setToken] = useState(localStorage.getItem("token") || "");
-  const [role, setRole] = useState(localStorage.getItem("role") || "");
 
   useEffect(() => {
     if (token) {
@@ -20,18 +19,11 @@ function App() {
     } else {
       localStorage.removeItem("token");
     }
-
-    if (role) {
-      localStorage.setItem("role", role);
-    } else {
-      localStorage.removeItem("role");
-    }
-  }, [token, role]);
+  }, [token]);
 
   const handleLogout = () => {
     localStorage.clear();
     setToken("");
-    setRole("");
     window.location.href = "/";
   };
 
@@ -39,20 +31,14 @@ function App() {
     <Router>
       <Background />
       <Routes>
-        <Route path="/" element={<Login setToken={setToken} setRole={setRole} />} />
+        <Route path="/" element={<Login setToken={setToken} />} />
         <Route path="/register" element={<Register />} />
 
         <Route
           path="/dashboard"
           element={
             <ProtectedRoute token={token}>
-              {role === "quizMaster" ? (
-                <Dashboard token={token} onLogout={handleLogout} />
-              ) : role === "player" ? (
-                <PlayerDashboard onLogout={handleLogout} />
-              ) : (
-                <Navigate to="/" replace />
-              )}
+              <Dashboard token={token} onLogout={handleLogout} />
             </ProtectedRoute>
           }
         />
@@ -60,7 +46,7 @@ function App() {
         <Route
           path="/create-quiz"
           element={
-            <ProtectedRoute token={token} requiredRole="quizMaster">
+            <ProtectedRoute token={token}>
               <CreateQuiz token={token} />
             </ProtectedRoute>
           }
@@ -68,7 +54,7 @@ function App() {
         <Route
           path="/edit-quiz/:quizId"
           element={
-            <ProtectedRoute token={token} requiredRole="quizMaster">
+            <ProtectedRoute token={token}>
               <EditQuiz token={token} />
             </ProtectedRoute>
           }
@@ -76,12 +62,11 @@ function App() {
         <Route
           path="/quizzes/:quizId/submissions"
           element={
-            <ProtectedRoute token={token} requiredRole="quizMaster">
+            <ProtectedRoute token={token}>
               <QuizSubmissions />
             </ProtectedRoute>
           }
         />
-
         <Route
           path="/quizzes/:quizId"
           element={

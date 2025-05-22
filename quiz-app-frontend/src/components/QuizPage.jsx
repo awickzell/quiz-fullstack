@@ -13,7 +13,6 @@ const QuizPage = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
 
-  // Hämta quizdata när komponenten laddas
   useEffect(() => {
     const fetchQuiz = async () => {
       try {
@@ -23,7 +22,6 @@ const QuizPage = () => {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
-        // Uppdatera quizdata med rätt objekt (response.data.quiz)
         setQuiz(response.data.quiz);
       } catch (err) {
         console.error("Fel vid hämtning av quiz:", err);
@@ -33,7 +31,6 @@ const QuizPage = () => {
     fetchQuiz();
   }, [quizId, token]);
 
-  // Hantera svar när index ändras
   useEffect(() => {
     if (!quiz) return;
 
@@ -41,12 +38,11 @@ const QuizPage = () => {
     setCurrentAnswer(prevAnswer?.answer || '');
     setSubAnswers(
       quiz.questions[currentIndex]?.subQuestions?.map((_, i) =>
-        prevAnswer?.subAnswers?.[i]?.answer || ''
+        prevAnswer?.subAnswers?.[i]?.subAnswer || ''
       ) || []
     );
   }, [currentIndex, quiz]);
 
-  // Hantera inskick av svar
   const handleAnswerSubmit = () => {
     const currentQuestion = quiz.questions[currentIndex];
     const hasSub = currentQuestion.subQuestions?.length > 0;
@@ -57,12 +53,12 @@ const QuizPage = () => {
 
     const updatedAnswers = [...answers];
     updatedAnswers[currentIndex] = {
-      question: currentQuestion.questionText,
+      questionText: currentQuestion.questionText,  // Ändrat från question till questionText
       answer: currentAnswer.trim(),
       subAnswers: hasSub
         ? currentQuestion.subQuestions.map((sq, i) => ({
-            question: sq.questionText,
-            answer: subAnswers[i]?.trim() || ''
+            questionText: sq.questionText,  // Lägger till frågetext här!
+            subAnswer: subAnswers[i]?.trim() || ''
           }))
         : []
     };
@@ -78,7 +74,6 @@ const QuizPage = () => {
     }
   };
 
-  // Hantera navigering till föregående fråga eller dashboard
   const handleBack = () => {
     if (currentIndex === 0) {
       navigate('/dashboard');
@@ -87,7 +82,6 @@ const QuizPage = () => {
     }
   };
 
-  // Skicka in alla svar till backend
   const submitAllAnswers = async (finalAnswers) => {
     try {
       await axios.post(
@@ -103,10 +97,8 @@ const QuizPage = () => {
     }
   };
 
-  // Om quizet inte har laddats än
   if (!quiz) return <p>Laddar quiz...</p>;
 
-  // Om användaren har skickat in sina svar
   if (submitted) {
     return (
       <div className="quiz-submitted-container">
@@ -118,7 +110,6 @@ const QuizPage = () => {
     );
   }
 
-  // Hämta aktuell fråga och subfrågor
   const currentQuestion = quiz.questions[currentIndex];
   const hasSubQuestions = currentQuestion.subQuestions?.length > 0;
 
@@ -127,9 +118,37 @@ const QuizPage = () => {
       <h1 className="quiz-title">{quiz.title}</h1>
       <h2>Fråga {currentIndex + 1} av {quiz.questions.length}</h2>
 
-      {hasSubQuestions ? (
-        <div className="question-block">
-          {[currentQuestion, ...currentQuestion.subQuestions].map((q, i) => (
+      <div className="question-block">
+        <h4>{currentQuestion.questionText}</h4>
+
+        {currentQuestion.type === 'multipleChoice' ? (
+          <div className="options">
+            {currentQuestion.options?.map((option, idx) => (
+              <label key={idx} style={{ display: 'block', marginBottom: '0.5rem' }}>
+                <input
+                  type="radio"
+                  name={`question-${currentIndex}`}
+                  value={option}
+                  checked={currentAnswer === option}
+                  onChange={() => setCurrentAnswer(option)}
+                />
+                {' '}
+                {option}
+              </label>
+            ))}
+          </div>
+        ) : currentQuestion.type === 'image' && currentQuestion.imageUrl ? (
+          <>
+            <img src={currentQuestion.imageUrl} alt="Quiz-bild" width="300" />
+            <textarea
+              className="answer-textarea"
+              value={currentAnswer}
+              onChange={(e) => setCurrentAnswer(e.target.value)}
+              placeholder="Ditt svar..."
+            />
+          </>
+        ) : hasSubQuestions ? (
+          [currentQuestion, ...currentQuestion.subQuestions].map((q, i) => (
             <div key={i} className="question-item">
               <h4>{String.fromCharCode(65 + i)}. {q.questionText}</h4>
               <textarea
@@ -147,23 +166,20 @@ const QuizPage = () => {
                 placeholder="Ditt svar..."
               />
             </div>
-          ))}
-        </div>
-      ) : (
-        <div className="question-block">
-          <h4>{currentQuestion.questionText}</h4>
+          ))
+        ) : (
           <textarea
             className="answer-textarea"
             value={currentAnswer}
             onChange={(e) => setCurrentAnswer(e.target.value)}
             placeholder="Ditt svar..."
           />
-        </div>
-      )}
+        )}
+      </div>
 
       <div className="button-group">
-        <button onClick={handleAnswerSubmit}>Svara!</button>
         <button onClick={handleBack}>Tillbaka</button>
+        <button onClick={handleAnswerSubmit}>Svara!</button>
       </div>
     </div>
   );

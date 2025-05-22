@@ -48,24 +48,29 @@ function QuizSubmissions() {
         <div className="submission-list">
           {submissions.map((submission, index) => (
             <div key={index} className="submission-card">
-              <h3 className="submission-player">Spelare: {submission.playerName}</h3>
+              <h3 className="submission-player">
+                Spelare: {submission.playerName}
+              </h3>
               <ul className="submission-answers">
-                {submission.answers.map((answer, i) => (
-                  <li key={i} className="submission-answer-item">
-                    <strong>Fråga:</strong> {answer.questionText} <br />
-                    <strong>Svar:</strong> {answer.answer}
-                    {answer.subAnswers && answer.subAnswers.length > 0 && (
-                      <ul className="sub-answers">
-                        {answer.subAnswers.map((subAnswer, j) => (
-                          <li key={j}>
-                            <strong>Följdfråga:</strong> {subAnswer.subQuestionText} <br />
-                            <strong>Svar:</strong> {subAnswer.subAnswer}
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </li>
-                ))}
+                {submission.answers.map((answer, i) => {
+                  return (
+                    <li key={i} className="submission-answer-item">
+                      <strong>Fråga:</strong> {answer.questionText} <br />
+                      <strong>Svar:</strong> {answer.answer}
+
+                      {answer.subAnswers && answer.subAnswers.length > 0 && (
+                        <ul className="sub-answers">
+                          {answer.subAnswers.map((subAnswer, j) => (
+                            <li key={j}>
+                              <strong>Följdfråga:</strong> {subAnswer.questionText} <br />
+                              <strong>Svar:</strong> {subAnswer.subAnswer}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </li>
+                  );
+                })}
               </ul>
             </div>
           ))}

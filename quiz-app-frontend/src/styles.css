@@ -1,6 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Chewy&display=swap");
 
-/* ===== Global Baslayout och typografi ===== */
+/* ======= GLOBAL STYLES ======= */
 body {
   margin: 0;
   font-family: Arial, sans-serif;
@@ -14,26 +14,6 @@ h3 {
   text-align: center;
 }
 
-.pulse-text {
-  display: inline-block;
-  animation: pulse 3.5s infinite ease-in-out;
-  font-family: "Chewy", sans-serif;
-  font-size: 88px;
-}
-
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.2);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
-/* ===== Formulär och Inputfält ===== */
 input,
 button {
   display: block;
@@ -62,96 +42,6 @@ button:hover {
   background-color: #0056b3;
 }
 
-/* ===== Containers ===== */
-.login-container,
-.create-quiz-container,
-.delete-quiz-container,
-.dashboard-container,
-.create-quiz-container,
-.edit-quiz-container {
-  max-width: 550px;
-  margin: 30px auto 0;
-  padding: 32px 16px;
-  background-color: rgba(255, 255, 255, 0.87);
-  box-shadow: 0 0 10px;
-  border-radius: 100px;
-  text-align: center;
-}
-
-/* ===== Login Container ===== */
-.login-container p {
-  text-align: center;
-}
-
-.login-container h2 {
-  font-family: "Chewy", sans-serif;
-  font-size: 88px;
-}
-
-.login-container form {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-}
-
-/* ===== Dashboard ===== */
-.dashboard-container h2 {
-  font-family: "Chewy", sans-serif;
-  font-size: 64px;
-  margin-bottom: 24px;
-}
-
-.message {
-  color: green;
-  margin-bottom: 16px;
-}
-
-.dashboard-container button {
-  width: 50%;
-  margin: 8px auto;
-  padding: 12px;
-  background-color: #007bff;
-  color: white;
-  border: 1px solid #ccc;
-  border-radius: 12px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.dashboard-container button:hover {
-  background-color: #0056b3;
-}
-
-/* ===== Quiz Actions (Create/Edit/Delete) ===== */
-.quiz-actions {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-}
-
-.quiz-actions button,
-.quiz-actions a {
-  width: 100%;
-  padding: 12px;
-  font-size: 16px;
-  text-align: center;
-  border-radius: 12px;
-  border: 1px solid #ccc;
-  background-color: #007bff;
-  color: white;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  margin: 0;
-}
-
-.quiz-actions button:hover,
-.quiz-actions a:hover {
-  background-color: #0056b3;
-}
-
-/* ===== Lista med quiz ===== */
 ul {
   list-style: none;
   padding: 0;
@@ -178,24 +68,60 @@ li a {
   text-align: center;
 }
 
-/* ===== Frågor och följdfrågor i Create/Edit ===== */
-.question-input,
-.sub-question-input {
-  margin-bottom: 16px;
-}
-
-.sub-question-input input {
-  margin-left: 16px;
-}
-
-/* ===== Felmeddelanden ===== */
 .error {
   color: red;
   text-align: center;
   margin-bottom: 16px;
 }
 
-/* ===== Bakgrundsanimering ===== */
+.pulse-text {
+  display: inline-block;
+  animation: pulse 3.5s infinite ease-in-out;
+  font-family: "Chewy", sans-serif;
+  font-size: 88px;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* ======= ActionButton.jsx ======= */
+.primary-button,
+.secondary-button,
+.tertiary-button,
+.edit-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  padding: 10px 4px;
+  font-size: 16px;
+}
+
+.primary-button:hover,
+.secondary-button:hover,
+.tertiary-button:hover,
+.edit-button:hover {
+  opacity: 0.9;
+}
+
+.edit-button {
+  padding: 10px 16px;
+  margin: 15px 4px;
+  width: fit-content;
+  max-width: 100px;
+}
+
+/* ======= Background.jsx ======= */
 .background-container {
   position: fixed;
   top: 0;
@@ -219,7 +145,216 @@ li a {
   opacity: 1;
 }
 
-/* ===== Quiz Page Styling ===== */
+/* ======= CreateQuiz.jsx ======= */
+.create-quiz-container {
+  max-width: 550px;
+  margin: 30px auto 0;
+  padding: 32px 16px;
+  background-color: rgba(255, 255, 255, 0.87);
+  box-shadow: 0 0 10px;
+  border-radius: 100px;
+  text-align: center;
+}
+
+.create-quiz-container h2 {
+  font-family: "Chewy", sans-serif;
+  font-size: 64px;
+  margin-bottom: 24px;
+}
+
+.create-quiz-container form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.question-field,
+.sub-question-field {
+  width: 100%;
+  padding: 0.6rem;
+  margin: 10px 0px;
+  border-radius: 24px;
+  border: 1px solid #ccc;
+  background-color: #f0f0f0;
+}
+
+.question-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.question-buttons button {
+  flex: 1;
+  min-width: 150px;
+  width: 100px;
+  margin: 0 20px;
+}
+
+.add-question-button {
+  margin-top: 1px;
+}
+
+.question-input,
+.sub-question-input,
+label.question-input,
+label.sub-question-input {
+  width: 80%;
+  max-width: 500px;
+  display: block;
+  margin: 0 auto 16px auto;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+/* ======= Dashboard.jsx ======= */
+.dashboard-container {
+  max-width: 550px;
+  margin: 30px auto 0;
+  padding: 32px 16px;
+  background-color: rgba(255, 255, 255, 0.87);
+  box-shadow: 0 0 10px;
+  border-radius: 100px;
+  text-align: center;
+}
+
+.dashboard-container h2 {
+  font-family: "Chewy", sans-serif;
+  font-size: 64px;
+  margin-bottom: 24px;
+}
+
+.dashboard-container button {
+  width: 50%;
+  margin: 8px auto;
+  padding: 12px;
+}
+
+.message {
+  color: green;
+  margin-bottom: 16px;
+}
+
+/* ======= DeleteQuiz.jsx ======= */
+.delete-quiz-container {
+  max-width: 550px;
+  margin: 30px auto 0;
+  padding: 32px 16px;
+  background-color: rgba(255, 255, 255, 0.87);
+  box-shadow: 0 0 10px;
+  border-radius: 100px;
+  text-align: center;
+}
+
+/* ======= EditQuiz.jsx ======= */
+.edit-quiz-container {
+  max-width: 700px;
+  margin: 40px auto;
+  padding: 32px 24px;
+  background-color: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+  border-radius: 64px;
+  text-align: center;
+}
+
+.edit-quiz-container h2 {
+  font-family: "Chewy", sans-serif;
+  font-size: 64px;
+  margin-bottom: 24px;
+}
+
+.edit-quiz-container form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.edit-question-block {
+  width: 100%;
+  background-color: #f0f0f0;
+  padding: 20px;
+  margin-bottom: 24px;
+  border: 1px solid #ccc;
+  border-radius: 24px;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.05);
+}
+
+.edit-question-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.edit-question-buttons button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 10px 16px;
+  font-size: 16px;
+  cursor: pointer;
+  min-width: 120px;
+}
+
+.edit-question-buttons button:hover {
+  background-color: #0056b3;
+}
+
+.image-upload-section {
+  margin-top: 12px;
+  margin-bottom: 12px;
+}
+
+.image-upload-section input[type="file"] {
+  display: block;
+  margin: 0 auto;
+}
+
+.image-upload-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.question-type-select {
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+/* ======= Login.jsx ======= */
+.login-container {
+  max-width: 550px;
+  margin: 30px auto 0;
+  padding: 32px 16px;
+  background-color: rgba(255, 255, 255, 0.87);
+  box-shadow: 0 0 10px;
+  border-radius: 100px;
+  text-align: center;
+}
+
+.login-container h2 {
+  font-family: "Chewy", sans-serif;
+  font-size: 88px;
+}
+
+.login-container p {
+  text-align: center;
+}
+
+.login-container form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+/* ======= QuizPage.jsx ======= */
 .quiz-page-container {
   max-width: 700px;
   margin: 40px auto;
@@ -265,7 +400,8 @@ li a {
 .button-group button {
   width: 40%;
 }
-/* ===== Quiz Submissions Page ===== */
+
+/* ======= QuizSubmissions.jsx ======= */
 .submissions-container {
   max-width: 700px;
   margin: 40px auto;
@@ -279,12 +415,6 @@ li a {
   font-size: 48px;
   text-align: center;
   margin-bottom: 24px;
-}
-
-.error {
-  color: red;
-  text-align: center;
-  margin-bottom: 16px;
 }
 
 .no-submissions {
@@ -324,161 +454,9 @@ li a {
   margin: 24px auto 0;
   width: 40%;
   padding: 12px;
-  background-color: #007bff;
-  color: white;
-  font-size: 16px;
-  border-radius: 12px;
-  border: 1px solid #ccc;
-  cursor: pointer;
-  transition: background-color 0.3s;
 }
 
-.submissions-container button:hover {
-  background-color: #0056b3;
-}
-/* ===== Quiz Slutfört (Tack-sida) ===== */
-
-.quiz-submitted-container {
-  max-width: 500px;
-  margin: 80px auto;
-  padding: 32px;
-  background-color: rgba(255, 255, 255, 0.92);
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
-  border-radius: 32px;
-  text-align: center;
-}
-
-.submitted-title {
-  font-family: "Chewy", sans-serif;
-  font-size: 64px;
-  margin-bottom: 16px;
-}
-
-.submitted-message {
-  font-size: 18px;
-  margin-bottom: 32px;
-  color: #333;
-}
-
-.submitted-button {
-  padding: 12px 24px;
-  font-size: 18px;
-  border: 1px solid #ccc;
-  background-color: #007bff;
-  color: white;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.submitted-button:hover {
-  background-color: #0056b3;
-}
-
-/* ===== Skapa Quiz ===== */
-
-.create-quiz-container h2 {
-  font-family: "Chewy", sans-serif;
-  font-size: 64px;
-  text-align: center;
-  margin-bottom: 24px;
-}
-.create-quiz-container {
-  max-width: 550px;
-  margin: 30px auto 0;
-  padding: 32px 16px;
-  background-color: rgba(255, 255, 255, 0.87);
-  box-shadow: 0 0 10px;
-  border-radius: 100px;
-}
-
-.create-quiz-container form {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.question-field,
-.sub-question-field {
-  width: 100%;
-  padding: 0.6rem;
-  margin: 10px 0px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  background-color: #f0f0f0;
-}
-
-.question-input,
-.sub-question-input {
-  margin-bottom: 1px;
-}
-
-.question-buttons {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  margin-top: 12px;
-  flex-wrap: wrap;
-}
-
-.question-buttons button {
-  flex: 1;
-  min-width: 150px;
-}
-
-.add-question-button {
-  margin-top: 1px;
-}
-
-.primary-button {
-  background-color: #007bff;
-  color: white;
-  padding: 10px 4px;
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  margin-top: 8px;
-}
-
-.secondary-button {
-  background-color: #007bff;
-  color: white;
-  padding: 10px 4px;
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  margin: 12px, 6px;
-}
-
-.tertiary-button {
-  background-color: #007bff;
-  color: white;
-  padding: 10px 4px;
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  margin-top: 6px;
-}
-
-.primary-button:hover,
-.secondary-button:hover,
-.tertiary-button:hover {
-  opacity: 0.9;
-}
-
-.edit-button {
-  background-color: #007bff;
-  color: white;
-  padding: 10px 16px;
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  margin: 15px 4px;
-  width: fit-content;
-  max-width: 100px;
-}
-
-/* ===== Register Container (Samma som login-container) ===== */
+/* ======= Register.jsx ======= */
 .register-container {
   max-width: 550px;
   margin: 30px auto;
@@ -513,18 +491,10 @@ li a {
   box-sizing: border-box;
 }
 
-.register-container select {
-  width: 65%;
-}
-
 .register-container button {
   width: 40%;
   margin-bottom: 2px;
   padding: 12px;
-  border-radius: 12px;
-  border: 1px solid #ccc;
-  font-size: 16px;
-  box-sizing: border-box;
 }
 
 .register-container button:hover {
@@ -536,6 +506,7 @@ li a {
   margin-bottom: 16px;
   font-size: 16px;
 }
+
 .register-container .back-button {
   margin-top: 16px;
   background-color: #007bff;
@@ -549,57 +520,4 @@ li a {
 
 .register-container .back-button:hover {
   background-color: #0056b3;
-}
-
-/* Edit quiz */
-
-.edit-quiz-container h2 {
-  font-family: "Chewy", sans-serif;
-  font-size: 64px;
-  text-align: center;
-  margin-bottom: 24px;
-}
-
-.edit-quiz-container {
-  max-width: 550px;
-  margin: 30px auto 0;
-  padding: 32px 16px;
-  background-color: rgba(255, 255, 255, 0.87);
-  box-shadow: 0 0 10px;
-  border-radius: 100px;
-  text-align: center;
-}
-
-.edit-quiz-container form {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-}
-
-/* Centrera labels och inputs */
-label.question-input,
-label.sub-question-input,
-.question-input,
-.sub-question-input {
-  width: 80%;
-  max-width: 500px;
-  display: block;
-  margin: 0 auto 16px auto;
-  text-align: center; /* Här centreras texten */
-  box-sizing: border-box;
-}
-
-/* Knapparna i frågaformuläret */
-.question-buttons {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  margin-top: 12px;
-  flex-wrap: wrap;
-}
-
-.question-buttons button {
-  width: 100px;
-  margin: 0 20px;
 }
