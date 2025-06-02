@@ -237,6 +237,27 @@ label.sub-question-input {
   margin-bottom: 16px;
 }
 
+.live-quiz-indicator {
+  color: #d32f2f;
+  font-weight: bold;
+  font-size: 18px;
+  margin-top: 8px;
+  display: inline-block;
+  animation: pulse 3.5s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
 /* ======= DeleteQuiz.jsx ======= */
 .delete-quiz-container {
   max-width: 550px;

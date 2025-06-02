@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 const CreateQuiz = ({ token }) => {
   const [title, setTitle] = useState("");
+  const [isLive, setIsLive] = useState(false);
   const [questions, setQuestions] = useState([
     {
       questionText: "",
@@ -116,11 +117,12 @@ const CreateQuiz = ({ token }) => {
     }));
 
     try {
-      await axios.post(
+      axios.post(
         `${import.meta.env.VITE_API_URL}/quizzes`,
-        { title, questions: questionsArray },
+        { title, questions: questionsArray, isLiveQuiz: isLive },
         { headers: { Authorization: `Bearer ${token}` } }
       );
+
       setMessage("Quiz skapades!");
       navigate("/dashboard");
     } catch (err) {
@@ -138,7 +140,18 @@ const CreateQuiz = ({ token }) => {
           placeholder="Titel"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
+          required
         />
+
+        {/* NY: Checkbox för Live Quiz */}
+        <label style={{ margin: "10px 0", display: "block" }}>
+          <input
+            type="checkbox"
+            checked={isLive}
+            onChange={(e) => setIsLive(e.target.checked)}
+          />{" "}
+          Live quiz
+        </label>
 
         <h3>Frågor:</h3>
         {questions.map((q, index) => (
@@ -158,6 +171,7 @@ const CreateQuiz = ({ token }) => {
               value={q.questionText}
               onChange={(e) => handleQuestionChange(index, "questionText", e.target.value)}
               className="question-field"
+              required
             />
 
             {q.type === "multipleChoice" && (
@@ -170,6 +184,7 @@ const CreateQuiz = ({ token }) => {
                       placeholder={`Svar ${optIndex + 1}`}
                       value={opt}
                       onChange={(e) => handleOptionChange(index, optIndex, e.target.value)}
+                      required
                     />
                     <button type="button" onClick={() => removeOption(index, optIndex)}>❌</button>
                   </div>
@@ -198,6 +213,7 @@ const CreateQuiz = ({ token }) => {
                   placeholder="Följdfråga"
                   value={sq.questionText}
                   onChange={(e) => handleSubQuestionChange(index, subIndex, e.target.value)}
+                  required
                 />
                 <button type="button" onClick={() => removeSubQuestion(index, subIndex)}>Ta bort följdfråga</button>
               </div>
@@ -206,10 +222,11 @@ const CreateQuiz = ({ token }) => {
             <div className="question-buttons">
               <button type="button" onClick={() => removeQuestion(index)}>Ta bort fråga</button>
               <button type="button" onClick={() => addSubQuestion(index)}>Lägg till följdfråga</button>
-              <button type="button" onClick={addQuestion}>Lägg till fråga</button>
             </div>
           </div>
         ))}
+
+        <button type="button" onClick={addQuestion}>➕ Lägg till fråga</button>
 
         <button type="submit" className="primary-button">Skapa Quiz</button>
       </form>

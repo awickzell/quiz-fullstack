@@ -28,7 +28,7 @@ const quizSchema = new mongoose.Schema({
       playerName: String,
       answers: [
         {
-          questionText: String,      // Ändrat från "question" till "questionText"
+          questionText: String,
           answer: String,
           subAnswers: [
             {
@@ -41,7 +41,8 @@ const quizSchema = new mongoose.Schema({
       submittedAt: { type: Date, default: Date.now },
     },
   ],
-}, { timestamps: true }); // Automatiskt createdAt och updatedAt
+  isLiveQuiz: { type: Boolean, default: false }, 
+}, { timestamps: true });
 
 const Quiz = mongoose.model('Quiz', quizSchema);
 

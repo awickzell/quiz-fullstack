@@ -1,39 +1,64 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useSocket } from '../context/SocketContext';
 
 const QuizPage = () => {
-  const { quizId } = useParams();
+  const { quizId, sessionId } = useParams();
+  const isLive = !!sessionId;
+  const socket = useSocket();
+  const navigate = useNavigate();
+  const token = localStorage.getItem("token");
+
   const [quiz, setQuiz] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState([]);
   const [currentAnswer, setCurrentAnswer] = useState('');
   const [subAnswers, setSubAnswers] = useState([]);
   const [submitted, setSubmitted] = useState(false);
-  const navigate = useNavigate();
-  const token = localStorage.getItem("token");
 
   useEffect(() => {
-    const fetchQuiz = async () => {
-      try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_API_URL}/quizzes/${quizId}`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-        setQuiz(response.data.quiz);
-      } catch (err) {
-        console.error("Fel vid hämtning av quiz:", err);
-      }
-    };
+    if (isLive) {
+      if (socket) {
+        socket.emit("joinSession", { sessionId });
 
-    fetchQuiz();
-  }, [quizId, token]);
+        socket.on("newQuestion", (question) => {
+          setQuiz({
+            title: "Live Quiz",
+            questions: [question],
+          });
+          setCurrentIndex(0);
+          setCurrentAnswer('');
+          setSubAnswers([]);
+        });
+
+        socket.on("sessionEnded", () => {
+          setSubmitted(true);
+        });
+
+        return () => {
+          socket.off("newQuestion");
+          socket.off("sessionEnded");
+        };
+      }
+    } else {
+      const fetchQuiz = async () => {
+        try {
+          const response = await axios.get(
+            `${import.meta.env.VITE_API_URL}/quizzes/${quizId}`,
+            { headers: { Authorization: `Bearer ${token}` } }
+          );
+          setQuiz(response.data.quiz);
+        } catch (err) {
+          console.error("Fel vid hämtning av quiz:", err);
+        }
+      };
+      fetchQuiz();
+    }
+  }, [isLive, quizId, sessionId, socket, token]);
 
   useEffect(() => {
     if (!quiz) return;
-
     const prevAnswer = answers[currentIndex];
     setCurrentAnswer(prevAnswer?.answer || '');
     setSubAnswers(
@@ -46,31 +71,37 @@ const QuizPage = () => {
   const handleAnswerSubmit = () => {
     const currentQuestion = quiz.questions[currentIndex];
     const hasSub = currentQuestion.subQuestions?.length > 0;
-
     const hasAnyAnswer = currentAnswer.trim() || subAnswers.some(ans => ans.trim());
 
     if (!hasAnyAnswer) return;
 
-    const updatedAnswers = [...answers];
-    updatedAnswers[currentIndex] = {
-      questionText: currentQuestion.questionText,  // Ändrat från question till questionText
+    const answerPayload = {
+      questionText: currentQuestion.questionText,
       answer: currentAnswer.trim(),
       subAnswers: hasSub
         ? currentQuestion.subQuestions.map((sq, i) => ({
-            questionText: sq.questionText,  // Lägger till frågetext här!
+            questionText: sq.questionText,
             subAnswer: subAnswers[i]?.trim() || ''
           }))
         : []
     };
 
-    setAnswers(updatedAnswers);
-    setCurrentAnswer('');
-    setSubAnswers([]);
-
-    if (currentIndex + 1 < quiz.questions.length) {
-      setCurrentIndex(currentIndex + 1);
+    if (isLive && socket) {
+      socket.emit("submitAnswer", { sessionId, answer: answerPayload });
+      setCurrentAnswer('');
+      setSubAnswers([]);
     } else {
-      submitAllAnswers(updatedAnswers);
+      const updatedAnswers = [...answers];
+      updatedAnswers[currentIndex] = answerPayload;
+      setAnswers(updatedAnswers);
+      setCurrentAnswer('');
+      setSubAnswers([]);
+
+      if (currentIndex + 1 < quiz.questions.length) {
+        setCurrentIndex(currentIndex + 1);
+      } else {
+        submitAllAnswers(updatedAnswers);
+      }
     }
   };
 
@@ -87,9 +118,7 @@ const QuizPage = () => {
       await axios.post(
         `${import.meta.env.VITE_API_URL}/quizzes/${quizId}/submit`,
         { answers: finalAnswers },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
       setSubmitted(true);
     } catch (err) {
@@ -97,7 +126,7 @@ const QuizPage = () => {
     }
   };
 
-  if (!quiz) return <p>Laddar quiz...</p>;
+  if (!quiz) return <p>{isLive ? 'Väntar på att frågan ska skickas...' : 'Laddar quiz...'}</p>;
 
   if (submitted) {
     return (
@@ -115,8 +144,8 @@ const QuizPage = () => {
 
   return (
     <div className="quiz-page-container">
-      <h1 className="quiz-title">{quiz.title}</h1>
-      <h2>Fråga {currentIndex + 1} av {quiz.questions.length}</h2>
+      <h1 className="quiz-title">{quiz.title}{isLive ? ' (Live)' : ''}</h1>
+      {!isLive && <h2>Fråga {currentIndex + 1} av {quiz.questions.length}</h2>}
 
       <div className="question-block">
         <h4>{currentQuestion.questionText}</h4>
@@ -178,7 +207,7 @@ const QuizPage = () => {
       </div>
 
       <div className="button-group">
-        <button onClick={handleBack}>Tillbaka</button>
+        {!isLive && <button onClick={handleBack}>Tillbaka</button>}
         <button onClick={handleAnswerSubmit}>Svara!</button>
       </div>
     </div>
