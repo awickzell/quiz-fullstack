@@ -1,27 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useSocket } from "../context/SocketContext";
+import { useSocket } from "../../context/SocketContext";
 import axios from "axios";
+import styles from "./PlayerLobby.module.css";
 
 const PlayerLobby = () => {
-  const [waitingText, setWaitingText] = useState("Quizet startar snart");
   const baseText = "Quizet startar snart";
-  const dots = ["", ".", "..", "..."];
   const navigate = useNavigate();
   const { quizId } = useParams();
   const socket = useSocket();
 
-  // 💬 Animerad text
-  useEffect(() => {
-    let index = 0;
-    const interval = setInterval(() => {
-      setWaitingText(`${baseText}${dots[index % dots.length]}`);
-      index++;
-    }, 500);
-    return () => clearInterval(interval);
-  }, []);
-
-  // 🔑 Hämta användarnamn & gå med i quiz
   useEffect(() => {
     const fetchUserNameAndJoin = async () => {
       try {
@@ -31,18 +19,14 @@ const PlayerLobby = () => {
         });
 
         const { name, _id } = res.data;
-
-        // ✅ Spara i localStorage så spelaren kan identifieras i quizet
         localStorage.setItem("playerName", name);
         localStorage.setItem("playerId", _id);
 
-        // 🟢 Anslut till quizrummet
         socket.emit("join-quiz", {
           quizId,
           playerName: name,
           playerId: _id,
         });
-
       } catch (error) {
         console.error("Kunde inte hämta användarnamn:", error);
       }
@@ -53,7 +37,6 @@ const PlayerLobby = () => {
     }
   }, [socket, quizId]);
 
-  // 🟢 Lyssna på start-signal från värden
   useEffect(() => {
     if (!socket) return;
 
@@ -69,9 +52,14 @@ const PlayerLobby = () => {
   }, [socket, quizId, navigate]);
 
   return (
-    <div>
-      <h2>{waitingText}</h2>
-      <button onClick={() => navigate("/dashboard")}>Tillbaka</button>
+    <div className={styles.lobbyContainer}>
+      <h2 className={styles.pulseText}>{baseText}</h2>
+      <button
+        onClick={() => navigate("/dashboard")}
+        className={styles.backButton}
+      >
+        Tillbaka
+      </button>
     </div>
   );
 };

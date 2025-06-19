@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import styles from './Background.module.css';
 
 const images = ["/Logo1.png", "/Logo2.png", "/Logo3.png", "/Logo4.png"];
 
@@ -14,13 +15,13 @@ function Background() {
   }, []);
 
   return (
-    <div className="background-container">
+    <div className={styles.backgroundContainer}>
       {images.map((image, index) => (
         <img
           key={index}
           src={image}
           alt={`background-${index}`}
-          className={`background-image ${index === currentIndex ? "active" : ""}`}
+          className={`${styles.backgroundImage} ${index === currentIndex ? styles.active : ""}`}
         />
       ))}
     </div>

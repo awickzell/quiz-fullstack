@@ -1,0 +1,83 @@
+/* ======= LiveQuizHost.jsx ======= */
+.liveQuizContainer {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 32px 24px;
+  background-color: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 0 10px;
+  border-radius: 32px;
+  text-align: center;
+}
+
+.liveQuizHost {
+  border-radius: 16px;
+  padding: 24px;
+  text-align: left;
+  margin-bottom: 20px;
+}
+
+.quizTitle {
+  font-family: "Chewy", sans-serif;
+  font-size: 64px;
+  margin-bottom: 16px;
+}
+
+.playerCount {
+  font-size: 20px;
+  margin-bottom: 24px;
+  font-weight: bold;
+}
+
+.activeQuestionBox {
+  background-color: #f1f1f1;
+  border-radius: 24px;
+  padding: 20px;
+  margin-bottom: 24px;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
+}
+
+.questionStatus,
+.answerStatus {
+  font-size: 18px;
+  margin-bottom: 12px;
+  font-weight: bold;
+}
+
+.questionSelector {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.questionButton {
+  background-color: #e0e0e0;
+  padding: 10px 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-weight: bold;
+}
+
+.questionButton:hover {
+  background-color: #ccc;
+}
+
+.questionButton.active {
+  background-color: #007bff;
+  color: white;
+}
+
+.endQuizButton {
+  background-color: #d32f2f;
+  padding: 12px 24px;
+  font-size: 18px;
+  border-radius: 16px;
+  margin-top: 16px;
+  font-weight: bold;
+}
+
+.endQuizButton:hover {
+  background-color: #b71c1c;
+}

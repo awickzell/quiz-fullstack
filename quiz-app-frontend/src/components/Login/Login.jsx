@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
+import styles from "./Login.module.css";
 
 const Login = ({ setToken }) => {
   const [name, setName] = useState("");
@@ -31,9 +32,9 @@ const Login = ({ setToken }) => {
   };
 
   return (
-    <div className="login-container">
-      <h2 className="pulse-text">Quized</h2>
-      {error && <p className="error">{error}</p>}
+    <div className={styles.loginContainer}>
+      <h2>Quized</h2>
+      {error && <p>{error}</p>}
       <form onSubmit={handleLogin}>
         <input
           type="text"

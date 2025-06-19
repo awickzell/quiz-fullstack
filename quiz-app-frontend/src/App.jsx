@@ -1,18 +1,19 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Login from "./components/Login";
-import Register from "./components/Register";
-import Dashboard from "./components/Dashboard";
-import CreateQuiz from "./components/CreateQuiz";
-import EditQuiz from "./components/EditQuiz";
-import QuizPage from "./components/QuizPage";
-import QuizSubmissions from "./components/QuizSubmissions";
-import ProtectedRoute from "./components/ProtectedRoute";
-import Background from "./components/Background";
 import { useState, useEffect } from "react";
-import LiveQuizHost from "./components/LiveQuizHost";
-import LiveQuizPlayer from "./components/LiveQuizPlayer";
-import HostLobby from "./components/HostLobby";
-import PlayerLobby from "./components/PlayerLobby";
+import Login from "./components/Login/Login";
+import Register from "./components/Register/Register";
+import Dashboard from "./components/Dashboard/Dashboard";
+import CreateQuiz from "./components/CreateQuiz/CreateQuiz";
+import EditQuiz from "./components/EditQuiz/EditQuiz";
+import QuizPage from "./components/QuizPage/QuizPage";
+import QuizSubmissions from "./components/QuizSubmissions/QuizSubmissions";
+import LiveQuizSubmissions from "./components/LiveQuizSubmissions/LiveQuizSubmissions";
+import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
+import Background from "./components/Background/Background";
+import LiveQuizHost from "./components/LiveQuizHost/LiveQuizHost";
+import LiveQuizPlayer from "./components/LiveQuizPlayer/LiveQuizPlayer";
+import HostLobby from "./components/HostLobby/HostLobby";
+import PlayerLobby from "./components/PlayerLobby/PlayerLobby";
 
 function App() {
   const [token, setToken] = useState(localStorage.getItem("token") || "");
@@ -68,6 +69,14 @@ function App() {
           element={
             <ProtectedRoute token={token}>
               <QuizSubmissions />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/livequiz/:quizId/submissions"
+          element={
+            <ProtectedRoute token={token}>
+              <LiveQuizSubmissions />
             </ProtectedRoute>
           }
         />

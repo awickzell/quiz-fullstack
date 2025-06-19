@@ -6,17 +6,13 @@ export const setupLiveQuizHandlers = (io, socket) => {
   console.log(`📡 Socket ansluten: ${socket.id}`);
 
   socket.on('join-quiz', ({ quizId, playerId, playerName }) => {
-    console.log(`➡️ join-quiz: quizId=${quizId}, playerId=${playerId}, playerName=${playerName}`);
-
     if (!quizId || !playerId || !playerName) {
-      console.warn('⚠️ Ogiltiga uppgifter för join-quiz');
       return socket.emit('error', { message: 'Ogiltiga uppgifter för att gå med i quiz.' });
     }
 
     socket.join(quizId);
 
     if (!liveQuizSessions.has(quizId)) {
-      console.log(`📘 Skapar ny session för quizId=${quizId}`);
       liveQuizSessions.set(quizId, {
         players: new Map(),
         answers: [],
@@ -31,8 +27,6 @@ export const setupLiveQuizHandlers = (io, socket) => {
     session.players.set(playerId, { playerName, socketId: socket.id });
 
     const players = Array.from(session.players.values()).map((p) => p.playerName);
-    console.log(`👥 Nuvarande spelare i quiz ${quizId}:`, players);
-
     io.to(quizId).emit('lobby-update', { players });
 
     if (session.quiz && session.currentQuestionIndex < session.quiz.questions.length) {
@@ -46,11 +40,9 @@ export const setupLiveQuizHandlers = (io, socket) => {
   });
 
   socket.on('host-quiz', ({ quizId, quizData }) => {
-    console.log(`👑 host-quiz: quizId=${quizId}, antal frågor=${quizData?.questions?.length ?? 0}`);
     socket.join(quizId);
 
     if (!liveQuizSessions.has(quizId)) {
-      console.log(`📘 Skapar ny session som host för quiz ${quizId}`);
       liveQuizSessions.set(quizId, {
         players: new Map(),
         answers: [],
@@ -67,16 +59,14 @@ export const setupLiveQuizHandlers = (io, socket) => {
     session.currentQuestionAnswers = new Map();
     session.hostSocketId = socket.id;
 
+    const players = Array.from(session.players.values()).map(p => p.playerName);
+    socket.emit('lobby-update', { players });
     socket.to(quizId).emit('host-joined');
   });
 
   socket.on('start-quiz', ({ quizId }) => {
-    console.log(`▶️ start-quiz: quizId=${quizId}`);
     const session = liveQuizSessions.get(quizId);
-    if (!session || !session.quiz) {
-      console.warn(`⚠️ start-quiz: Ingen session eller quizdata för quizId=${quizId}`);
-      return;
-    }
+    if (!session || !session.quiz) return;
 
     session.currentQuestionIndex = 0;
     session.currentQuestionAnswers = new Map();
@@ -84,7 +74,6 @@ export const setupLiveQuizHandlers = (io, socket) => {
     io.to(quizId).emit('quiz-started');
 
     const firstQuestion = session.quiz.questions[0];
-    console.log(`📨 Skickar första frågan till spelare och host`);
 
     const emitQuestion = (socketId) => {
       io.to(socketId).emit('show-question', firstQuestion);
@@ -104,7 +93,6 @@ export const setupLiveQuizHandlers = (io, socket) => {
   });
 
   socket.on('player-ready', ({ quizId, playerId }) => {
-    console.log(`✅ player-ready: playerId=${playerId}, quizId=${quizId}`);
     const session = liveQuizSessions.get(quizId);
     if (!session || !session.quiz) return;
 
@@ -122,7 +110,6 @@ export const setupLiveQuizHandlers = (io, socket) => {
   });
 
   socket.on('next-question', ({ quizId, questionIndex }) => {
-    console.log(`⏭️ next-question: quizId=${quizId}, index=${questionIndex}`);
     const session = liveQuizSessions.get(quizId);
     if (!session || !session.quiz) return;
 
@@ -150,61 +137,77 @@ export const setupLiveQuizHandlers = (io, socket) => {
   });
 
   socket.on('submit-answer', ({ quizId, playerId, answerData }) => {
-    console.log(`📝 submit-answer: quizId=${quizId}, playerId=${playerId}`);
     const session = liveQuizSessions.get(quizId);
     const player = session?.players.get(playerId);
-
+    
     if (!session || !player) return;
-
+    
     if (!session.currentQuestionAnswers.has(playerId)) {
       session.currentQuestionAnswers.set(playerId, answerData);
-
+      
+      const question = session.quiz.questions[session.currentQuestionIndex];
+      
+      let playerEntry = session.answers.find(entry => entry.playerName === player.playerName);
+      
+      if (!playerEntry) {
+        playerEntry = {
+          playerName: player.playerName,
+          answerData: [],
+        };
+        session.answers.push(playerEntry);
+      }
+      
+      playerEntry.answerData.push({
+        ...answerData,
+        questionId: answerData.questionId || question?._id || null,
+      });
+      
       const update = {
         count: session.currentQuestionAnswers.size,
         totalPlayers: session.players.size,
       };
-
+      
       io.to(quizId).emit('answer-count-update', update);
-
-      session.answers.push({
-        playerName: player.playerName,
-        answerData,
-      });
-
       io.to(player.socketId).emit('answer-confirmed');
     }
   });
-
+  
   socket.on('end-quiz', async ({ quizId }) => {
     const session = liveQuizSessions.get(quizId);
     if (!session) return;
-
+    
     try {
       for (const { playerName, answerData } of session.answers) {
-        let structuredAnswers = [];
-
-        if (typeof answerData === 'string') {
-          structuredAnswers = [{
-            questionText: 'Okänd fråga',
-            answer: answerData,
-            subAnswers: [],
-          }];
-        } else if (Array.isArray(answerData)) {
-          structuredAnswers = answerData;
-        } else if (answerData && typeof answerData === 'object') {
-          structuredAnswers = [answerData];
-        } else {
-          console.warn('⚠️ Ovänat format på answerData:', answerData);
-        }
-
+        const structuredAnswers = (Array.isArray(answerData) ? answerData : []).map(ans => {
+          const question = session.quiz.questions.find(q => {
+            const qId = q._id?.toString?.();
+            const aId = ans.questionId?.toString?.();
+            return qId && aId && qId === aId;
+          });
+          
+          return {
+            questionText: question?.questionText || 'Okänd fråga',
+            answer: ans.answer || '',
+            correct: ans.correct ?? false,
+            subAnswers: Array.isArray(ans.subAnswers)
+            ? ans.subAnswers.map(sub => ({
+              subQuestionText: sub.subQuestionText || '',
+              subAnswer: sub.subAnswer || '',
+              correct: sub.correct ?? false,
+            }))
+            : [],
+          };
+        });
+        
         const newResponse = new QuizResponse({
           quiz: quizId,
           playerName,
           answers: structuredAnswers,
         });
+        
         await newResponse.save();
       }
-
+      
       io.to(quizId).emit('quiz-ended', { summary: session.answers });
       liveQuizSessions.delete(quizId);
     } catch (error) {
@@ -212,8 +215,8 @@ export const setupLiveQuizHandlers = (io, socket) => {
     }
   });
 
+
   socket.on('disconnect', () => {
-    console.log(`🔌 Socket frånkopplad: ${socket.id}`);
     for (const [quizId, session] of liveQuizSessions.entries()) {
       let disconnectedPlayerId = null;
 
@@ -227,19 +230,15 @@ export const setupLiveQuizHandlers = (io, socket) => {
       if (disconnectedPlayerId) {
         session.players.delete(disconnectedPlayerId);
         const players = Array.from(session.players.values()).map((p) => p.playerName);
-        console.log(`👤 Spelare frånkopplad: ${disconnectedPlayerId}, uppdaterar lobby för quizId=${quizId}`);
-
         io.to(quizId).emit('lobby-update', { players });
 
         if (session.players.size === 0) {
-          console.log(`🧹 Inga spelare kvar, rensar session för quizId=${quizId}`);
           liveQuizSessions.delete(quizId);
         }
         break;
       }
 
       if (session.hostSocketId === socket.id) {
-        console.log(`👑 Host frånkopplad för quizId=${quizId}`);
         session.hostSocketId = null;
         io.to(quizId).emit('host-disconnected');
       }

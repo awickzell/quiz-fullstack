@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
+import styles from "./EditQuiz.module.css";
 
 function EditQuiz({ token }) {
   const { quizId } = useParams();
@@ -31,7 +32,7 @@ function EditQuiz({ token }) {
 
     fetchQuiz();
   }, [quizId, token]);
-
+  
   const handleTitleChange = (e) => {
     setQuiz({ ...quiz, title: e.target.value });
   };
@@ -156,31 +157,31 @@ function EditQuiz({ token }) {
 
   if (loading) return <div>Laddar...</div>;
   if (errorMessage) return <div>{errorMessage}</div>;
-  if (!Array.isArray(quiz.questions)) return <div>Inga frågor tillgängliga.</div>;
+  if (!Array.isArray(quiz?.questions)) return <div>Inga frågor tillgängliga.</div>;
 
   return (
-    <div className="edit-quiz-container">
+    <div className={styles.editQuizContainer}>
       <h2>Redigera Quiz</h2>
       <form>
-        <div className="question-field">
+        <div className={styles.questionField}>
           <label htmlFor="quiz-title">Titel:</label>
           <input
             type="text"
             id="quiz-title"
             value={quiz.title}
             onChange={handleTitleChange}
-            className="quiz-title-input"
+            className={styles.quizTitleInput}
           />
         </div>
 
         {quiz.questions.map((question, index) => (
-          <div key={index} className="edit-question-block">
-            <h4 className="question-header">Fråga {index + 1}</h4>
+          <div key={index} className={styles.editQuestionBlock}>
+            <h4 className={styles.questionHeader}>Fråga {index + 1}</h4>
 
             <select
               value={question.type}
               onChange={(e) => handleQuestionFieldChange(index, "type", e.target.value)}
-              className="question-type-select"
+              className={styles.questionTypeSelect}
             >
               <option value="text">Textfråga</option>
               <option value="multipleChoice">Flervalsfråga</option>
@@ -192,50 +193,58 @@ function EditQuiz({ token }) {
               value={question.questionText}
               onChange={(e) => handleQuestionFieldChange(index, "questionText", e.target.value)}
               placeholder="Frågetext"
-              className="question-text-input"
+              className={styles.questionTextInput}
             />
 
             {question.type === "multipleChoice" && (
-              <div className="options-section">
-                <p>Svarsalternativ:</p>
+              <div className={styles.optionsSection}>
+                <p>Svar:</p>
                 {question.options?.map((opt, optIndex) => (
-                  <div key={optIndex} className="option-item">
+                  <div key={optIndex} className={styles.optionItem}>
                     <input
                       type="text"
                       value={opt}
                       onChange={(e) => handleOptionChange(index, optIndex, e.target.value)}
-                      className="option-input"
+                      className={styles.optionInput}
                     />
-                    <button type="button" onClick={() => removeOption(index, optIndex)} className="remove-option-button">
+                    <button
+                      type="button"
+                      onClick={() => removeOption(index, optIndex)}
+                      className={styles.removeOptionButton}
+                    >
                       ❌
                     </button>
                   </div>
                 ))}
-                <button type="button" onClick={() => addOption(index)} className="add-option-button">
-                  ➕ Lägg till svar
+                <button type="button" onClick={() => addOption(index)} className={styles.addOptionButton}>
+                  ➕ Lägg till svarsalternativ
                 </button>
               </div>
             )}
 
             {question.type === "image" && (
-              <div className="image-upload-section">
+              <div className={styles.imageUploadSection}>
                 <label>Bild:</label>
                 <input
                   type="file"
                   accept="image/*"
                   onChange={(e) => handleImageUpload(e, index)}
                   key={question.imageUrl || `image-upload-${index}`}
-                  className="image-upload-input"
+                  className={styles.imageUploadInput}
                 />
                 {question.imageUrl && (
-                  <div className="image-preview-container">
+                  <div className={styles.imagePreviewContainer}>
                     <img
                       src={`${import.meta.env.VITE_API_URL}/${question.imageUrl}`}
                       alt="Uppladdad"
-                      className="image-preview"
+                      className={styles.imagePreview}
                     />
-                    <button type="button" onClick={() => handleRemoveImage(index)} className="remove-image-button">
-                    Ta bort bild
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveImage(index)}
+                      className={styles.removeImageButton}
+                    >
+                      Ta bort bild
                     </button>
                   </div>
                 )}
@@ -243,42 +252,42 @@ function EditQuiz({ token }) {
             )}
 
             {question.subQuestions?.map((subQ, subIndex) => (
-              <div key={subIndex} className="sub-question-block">
+              <div key={subIndex} className={styles.subQuestionBlock}>
                 <input
                   type="text"
                   value={subQ.questionText}
                   onChange={(e) => handleSubQuestionChange(index, subIndex, e.target.value)}
                   placeholder="Följdfråga"
-                  className="sub-question-input"
+                  className={styles.subQuestionInput}
                 />
                 <button
                   type="button"
                   onClick={() => removeSubQuestion(index, subIndex)}
-                  className="remove-sub-question-button"
+                  className={styles.removeSubQuestionButton}
                 >
                   Ta bort följdfråga
                 </button>
               </div>
             ))}
-            <button type="button" onClick={() => addSubQuestion(index)} className="add-sub-question-button">
+            <button type="button" onClick={() => addSubQuestion(index)} className={styles.addSubQuestionButton}>
               Lägg till följdfråga
             </button>
-            <button type="button" onClick={() => removeQuestion(index)} className="remove-question-button">
+            <button type="button" onClick={() => removeQuestion(index)} className={styles.removeQuestionButton}>
               Ta bort fråga
             </button>
           </div>
         ))}
 
-        <button type="button" onClick={addQuestion} className="add-question-button">
+        <button type="button" onClick={addQuestion} className={styles.addQuestionButton}>
           ➕ Lägg till ny fråga
         </button>
       </form>
 
-      <div className="question-buttons">
-        <button type="button" onClick={handleSave} className="primary-button">
+      <div className={styles.questionButtons}>
+        <button type="button" onClick={handleSave} className={styles.primaryButton}>
           Spara ändringar
         </button>
-        <button type="button" onClick={() => navigate(-1)} className="secondary-button">
+        <button type="button" onClick={() => navigate(-1)} className={styles.secondaryButton}>
           Tillbaka
         </button>
       </div>

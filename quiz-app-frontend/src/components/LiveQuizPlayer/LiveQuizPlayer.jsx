@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useSocket } from '../context/SocketContext';
+import axios from 'axios';
+import { useSocket } from '../../context/SocketContext';
+import styles from './LiveQuizPlayer.module.css';
 
 const LiveQuizPlayer = () => {
   const { quizId } = useParams();
   const navigate = useNavigate();
   const socket = useSocket();
 
+  const [quiz, setQuiz] = useState(null);
   const [playerId, setPlayerId] = useState(null);
   const [playerName, setPlayerName] = useState('');
   const [question, setQuestion] = useState(null);
@@ -15,6 +18,25 @@ const LiveQuizPlayer = () => {
   const [subAnswers, setSubAnswers] = useState([]);
   const [waitingText, setWaitingText] = useState('Väntar på nästa fråga...');
   const [answerConfirmed, setAnswerConfirmed] = useState(false);
+
+  const token = localStorage.getItem('token');
+
+  useEffect(() => {
+    const fetchQuiz = async () => {
+      try {
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/quizzes/${quizId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setQuiz(res.data.quiz);
+      } catch (err) {
+        console.error('Kunde inte hämta quiz:', err);
+      }
+    };
+
+    if (quizId && token) {
+      fetchQuiz();
+    }
+  }, [quizId, token]);
 
   useEffect(() => {
     const storedPlayerId = localStorage.getItem('playerId');
@@ -39,7 +61,6 @@ const LiveQuizPlayer = () => {
       setAnswer('');
       setAnswerConfirmed(false);
 
-      // Om det är en fråga med subQuestions, initiera subAnswers-arrayen
       if (questionData.subQuestions && questionData.subQuestions.length > 0) {
         setSubAnswers(questionData.subQuestions.map(() => ''));
       } else {
@@ -58,7 +79,7 @@ const LiveQuizPlayer = () => {
     };
 
     const handleQuizEnded = () => {
-      alert('Quizet har avslutats. Du kommer nu att återvända till Dashboard.');
+      alert('Quizet har avslutats');
       navigate('/dashboard');
     };
 
@@ -92,7 +113,7 @@ const LiveQuizPlayer = () => {
       (!answer || answer.trim() === '') &&
       !(question?.subQuestions?.length > 0 && subAnswers.every(a => a.trim() !== ''))
     ) {
-      alert('Fyll i alla svar innan du skickar.');
+      alert('Fyll i alla svar innan du skickar');
       return;
     }
 
@@ -100,6 +121,7 @@ const LiveQuizPlayer = () => {
       quizId,
       playerId,
       answerData: {
+        questionId: question._id,
         answer,
         subAnswers: question?.subQuestions?.map((subQ, i) => ({
           subQuestionText: subQ.questionText,
@@ -110,59 +132,51 @@ const LiveQuizPlayer = () => {
   };
 
   if (!playerId || !playerName) return <div>Laddar spelarinformation...</div>;
+  if (!quiz) return <div>Laddar quiz...</div>;
 
   return (
-    <div className="livequiz-player">
-      <h2>Quiz</h2>
-      <p>
+    <div className={styles.quizPageContainer}>
+      <h1 className={styles.quizTitle}>Live Quiz: {quiz.title}</h1>
+      <p className={styles.quizInfo}>
         Fråga {questionMeta.currentIndex} av {questionMeta.total}
       </p>
 
       {question ? (
-        <div>
-          <h3>{question.questionText}</h3>
+        <div className={styles.liveQuizContainer}>
+          <h3 className={styles.questionTitle}>{question.questionText}</h3>
 
           {question.type === 'multipleChoice' && Array.isArray(question.options) ? (
-            <ul>
+            <ul className={styles.questionOptions}>
               {question.options.map((opt, idx) => (
-                <li key={idx}>
-                  <label>
-                    <input
-                      type="radio"
-                      name="answer"
-                      value={opt}
-                      checked={answer === opt}
-                      onChange={() => setAnswer(opt)}
-                      disabled={answerConfirmed}
-                    />
-                    {opt}
-                  </label>
+                <li
+                  key={idx}
+                  className={`${styles.questionOption} ${answer === opt ? styles.selected : ''}`}
+                  onClick={() => !answerConfirmed && setAnswer(opt)}
+                >
+                  {opt}
                 </li>
               ))}
             </ul>
           ) : question.type === 'text' ? (
             <textarea
+              className={styles.answerTextarea}
               value={answer}
               onChange={(e) => setAnswer(e.target.value)}
               disabled={answerConfirmed}
-              rows={4}
-              cols={50}
               placeholder="Skriv ditt svar här..."
             />
           ) : null}
 
           {question.subQuestions?.length > 0 && (
             <div>
-              <h4>Följdfrågor</h4>
               {question.subQuestions.map((subQ, idx) => (
-                <div key={idx}>
-                  <label>{subQ.questionText}</label>
+                <div key={idx} className={styles.questionItem}>
+                  <label className={styles.questionInput}>{subQ.questionText}</label>
                   <textarea
+                    className={styles.answerTextarea}
                     value={subAnswers[idx]}
                     onChange={(e) => handleSubAnswerChange(idx, e.target.value)}
                     disabled={answerConfirmed}
-                    rows={2}
-                    cols={50}
                     placeholder="Skriv ditt svar här..."
                   />
                 </div>
@@ -171,15 +185,29 @@ const LiveQuizPlayer = () => {
           )}
 
           {!answerConfirmed ? (
-            <button onClick={submitAnswer} disabled={question.subQuestions?.length > 0 ? subAnswers.some(a => a.trim() === '') : answer.trim() === ''}>
-              Skicka svar
-            </button>
+            <div className={styles.buttonGroup}>
+              <button
+                className={styles.primaryButton}
+                onClick={submitAnswer}
+                disabled={
+                  question.subQuestions?.length > 0
+                    ? subAnswers.some(a => a.trim() === '')
+                    : answer.trim() === ''
+                }
+              >
+                Skicka svar
+              </button>
+            </div>
           ) : (
-            <p>Tack för ditt svar!</p>
+            <p className={styles.message}>
+              {questionMeta.currentIndex === questionMeta.total
+                ? 'Bra spelat!'
+                : 'Väntar på nästa fråga'}
+            </p>
           )}
         </div>
       ) : (
-        <p>{waitingText}</p>
+        <p className={styles.message}>{waitingText}</p>
       )}
     </div>
   );

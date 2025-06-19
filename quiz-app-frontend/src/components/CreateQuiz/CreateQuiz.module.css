@@ -1,0 +1,123 @@
+/* ======= CreateQuiz.jsx ======= */
+.createQuizContainer {
+  max-width: 550px;
+  margin: 30px auto 0;
+  padding: 32px 16px;
+  background-color: rgba(255, 255, 255, 0.87);
+  box-shadow: 0 0 10px;
+  border-radius: 100px;
+  text-align: center;
+}
+
+.quizTitle {
+  text-align: center;
+}
+
+.quizForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+}
+
+.inputTitle,
+.questionTextInput,
+.questionTypeSelect,
+.optionsSection input,
+.subQuestionBlock input {
+  width: 80%;
+  padding: 0.5rem;
+  text-align: center;
+  font-weight: bold;
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  user-select: none;
+  font-weight: bold;
+  font-size: 18px;
+  color: #d32f2f;
+  position: relative;
+}
+
+.checkboxLabel > div {
+  display: flex;
+  align-items: center;
+}
+
+.checkboxLabel input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.customCheckbox {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #007bff;
+  border-radius: 4px;
+  background-color: white;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  transition: background-color 0.2s ease;
+  position: relative;
+}
+
+.questionBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 12px;
+  border: 1px solid #ccc;
+  padding: 1rem;
+  width: 80%;
+  margin: 0 auto;
+}
+
+.questionContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 12px;
+  margin: 0 auto;
+}
+.subQuestionBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 0.5rem;
+  width: 100%;
+}
+
+.optionItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.imageUploadSection img.uploaded-image {
+  max-width: 200px;
+  margin-top: 0.5rem;
+}
+
+.questionControls {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.submitButton,
+.backButton {
+  padding: 0.5rem 1rem;
+  margin-top: 1rem;
+  cursor: pointer;
+}
+
+.feedbackMessage {
+  margin-top: 1rem;
+  font-weight: bold;
+}

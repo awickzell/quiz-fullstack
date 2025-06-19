@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import styles from "./DeleteQuiz.module.css";
 
 const DeleteQuiz = ({ token }) => {
   const [quizzes, setQuizzes] = useState([]);
@@ -25,8 +26,8 @@ const DeleteQuiz = ({ token }) => {
   }, [token]);
 
   const handleDelete = async (quizId) => {
-    const confirm = window.confirm("Är du säker på att du vill radera detta quiz?");
-    if (!confirm) return;
+    const confirmDelete = window.confirm("Är du säker på att du vill radera detta quiz?");
+    if (!confirmDelete) return;
 
     try {
       await axios.delete(`${import.meta.env.VITE_API_URL}/quizzes/${quizId}`, {
@@ -43,22 +44,29 @@ const DeleteQuiz = ({ token }) => {
   };
 
   return (
-    <div className="delete-quiz-container">
-      <h2>Radera Quiz</h2>
-      {message && <p>{message}</p>}
+    <div className={styles.deleteQuizContainer}>
+      <h2 className={styles.heading}>Radera Quiz</h2>
+      {message && <p className={styles.message}>{message}</p>}
       {quizzes.length === 0 ? (
-        <p>Inga quiz tillgängliga.</p>
+        <p className={styles.noQuizzes}>Inga quiz tillgängliga.</p>
       ) : (
-        <ul>
+        <ul className={styles.quizList}>
           {quizzes.map((quiz) => (
-            <li key={quiz._id}>
-              {quiz.title}
-              <button onClick={() => handleDelete(quiz._id)}>Radera</button>
+            <li key={quiz._id} className={styles.quizItem}>
+              <span>{quiz.title}</span>
+              <button
+                className={styles.deleteButton}
+                onClick={() => handleDelete(quiz._id)}
+              >
+                Radera
+              </button>
             </li>
           ))}
         </ul>
       )}
-      <button onClick={() => navigate("/dashboard")}>Tillbaka</button>
+      <button className={styles.backButton} onClick={() => navigate("/dashboard")}>
+        Tillbaka
+      </button>
     </div>
   );
 };

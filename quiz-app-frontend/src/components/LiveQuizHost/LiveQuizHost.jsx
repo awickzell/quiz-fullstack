@@ -1,8 +1,9 @@
-// LiveQuizHost.jsx
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { useSocket } from '../context/SocketContext';
+import { useSocket } from '../../context/SocketContext';
+import QuestionBox from '../../components/QuestionBox/QuestionBox';
+import styles from './LiveQuizHost.module.css';
 
 const LiveQuizHost = () => {
   const { quizId } = useParams();
@@ -31,7 +32,6 @@ const LiveQuizHost = () => {
     fetchQuiz();
   }, [quizId, token]);
 
-  // 🟢 Emit start-quiz först när quiz är laddad och host vy är mountad
   useEffect(() => {
     if (socket && quiz) {
       socket.emit('start-quiz', { quizId });
@@ -66,40 +66,61 @@ const LiveQuizHost = () => {
     };
   }, [socket, quizId, quiz]);
 
-  const sendNext = () => {
+  const handleQuestionClick = (index) => {
     if (!quiz || !socket) return;
 
-    if (currentIndex < quiz.questions.length) {
-      socket.emit('next-question', { quizId, questionIndex: currentIndex });
-      setAnswerCount(0);
-      setCurrentIndex((prev) => prev + 1);
-    } else {
-      socket.emit('end-quiz', { quizId });
-      navigate('/dashboard');
-    }
+    socket.emit('next-question', { quizId, questionIndex: index });
+    setCurrentIndex(index + 1);
+    setAnswerCount(0);
+  };
+
+  const endQuiz = () => {
+    if (!quiz || !socket) return;
+    socket.emit('end-quiz', { quizId });
+    navigate('/dashboard');
   };
 
   if (!quiz) return <p>Laddar quiz...</p>;
 
+  const currentQuestion = quiz.questions[currentIndex - 1];
+
   return (
-    <div className="host-container">
-      <h1>Live Quiz: {quiz.title}</h1>
-      <p>Spelare anslutna: {players.length}</p>
+    <div className={styles.liveQuizContainer}>
+      <h1 className={styles.quizTitle}>Live Quiz: {quiz.title}</h1>
+      <p className={styles.playerCount}>Spelare anslutna: {players.length}</p>
 
       {quizStarted ? (
         <>
-          <p>
-            Fråga {Math.min(currentIndex, quiz.questions.length)} / {quiz.questions.length}
-          </p>
-          <p>
-            Antal svar: {answerCount} / {totalPlayers}
-          </p>
-          <button onClick={sendNext}>
-            {currentIndex < quiz.questions.length ? 'Nästa fråga' : 'Avsluta quiz'}
+          <div className={styles.activeQuestionBox}>
+            <p className={styles.questionStatus}>
+              Fråga {Math.min(currentIndex, quiz.questions.length)} / {quiz.questions.length}
+            </p>
+            <p className={styles.answerStatus}>
+              Antal svar: {answerCount} / {totalPlayers}
+            </p>
+            {currentQuestion && (
+              <QuestionBox question={currentQuestion} index={currentIndex - 1} />
+            )}
+          </div>
+
+          <div className={styles.questionSelector}>
+            {quiz.questions.map((q, i) => (
+              <div
+                key={i}
+                className={`${styles.questionButton} ${currentIndex - 1 === i ? styles.active : ''}`}
+                onClick={() => handleQuestionClick(i)}
+              >
+                Fråga {i + 1}
+              </div>
+            ))}
+          </div>
+
+          <button className={styles.endQuizButton} onClick={endQuiz}>
+            Avsluta quiz
           </button>
         </>
       ) : (
-        <p>Väntar på att quiz ska startas...</p>
+        <p className={styles.waitingMessage}>Väntar på att quiz ska startas...</p>
       )}
     </div>
   );

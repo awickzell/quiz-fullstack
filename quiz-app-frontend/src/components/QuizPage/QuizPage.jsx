@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { useSocket } from '../context/SocketContext';
+import { useSocket } from '../../context/SocketContext';
+import styles from './QuizPage.module.css';
 
 const QuizPage = () => {
   const { quizId, sessionId } = useParams();
@@ -130,9 +131,9 @@ const QuizPage = () => {
 
   if (submitted) {
     return (
-      <div className="quiz-submitted-container">
-        <h2 className="submitted-title">Tack för dina svar!</h2>
-        <button className="submitted-button" onClick={() => navigate('/dashboard')}>
+      <div className={styles.quizSubmittedContainer}>
+        <h2 className={styles.submittedTitle}>Tack för dina svar!</h2>
+        <button className={styles.submittedButton} onClick={() => navigate('/dashboard')}>
           Tillbaka till startsidan
         </button>
       </div>
@@ -143,34 +144,32 @@ const QuizPage = () => {
   const hasSubQuestions = currentQuestion.subQuestions?.length > 0;
 
   return (
-    <div className="quiz-page-container">
-      <h1 className="quiz-title">{quiz.title}{isLive ? ' (Live)' : ''}</h1>
-      {!isLive && <h2>Fråga {currentIndex + 1} av {quiz.questions.length}</h2>}
+    <div className={styles.quizPageContainer}>
+      <h1 className={styles.quizTitle}>{quiz.title}{isLive ? ' (Live)' : ''}</h1>
+      {!isLive && <h2 className={styles.quizSubtitle}>Fråga {currentIndex + 1} av {quiz.questions.length}</h2>}
 
-      <div className="question-block">
-        <h4>{currentQuestion.questionText}</h4>
+      <div className={styles.questionBlock}>
+        <h4 className={styles.questionText}>{currentQuestion.questionText}</h4>
 
         {currentQuestion.type === 'multipleChoice' ? (
-          <div className="options">
+          <div className={styles.options}>
+           <ul className={styles.questionOptions}>
             {currentQuestion.options?.map((option, idx) => (
-              <label key={idx} style={{ display: 'block', marginBottom: '0.5rem' }}>
-                <input
-                  type="radio"
-                  name={`question-${currentIndex}`}
-                  value={option}
-                  checked={currentAnswer === option}
-                  onChange={() => setCurrentAnswer(option)}
-                />
-                {' '}
+              <li
+              key={idx}
+              className={`${styles.questionOption} ${currentAnswer === option ? styles.selected : ''}`}
+              onClick={() => setCurrentAnswer(option)}
+              >
                 {option}
-              </label>
-            ))}
+                </li>
+              ))}
+              </ul>
           </div>
         ) : currentQuestion.type === 'image' && currentQuestion.imageUrl ? (
           <>
             <img src={currentQuestion.imageUrl} alt="Quiz-bild" width="300" />
             <textarea
-              className="answer-textarea"
+              className={styles.answerTextarea}
               value={currentAnswer}
               onChange={(e) => setCurrentAnswer(e.target.value)}
               placeholder="Ditt svar..."
@@ -178,10 +177,10 @@ const QuizPage = () => {
           </>
         ) : hasSubQuestions ? (
           [currentQuestion, ...currentQuestion.subQuestions].map((q, i) => (
-            <div key={i} className="question-item">
+            <div key={i} className={styles.questionItem}>
               <h4>{String.fromCharCode(65 + i)}. {q.questionText}</h4>
               <textarea
-                className="answer-textarea"
+                className={styles.answerTextarea}
                 value={i === 0 ? currentAnswer : subAnswers[i - 1] || ''}
                 onChange={(e) => {
                   if (i === 0) {
@@ -198,7 +197,7 @@ const QuizPage = () => {
           ))
         ) : (
           <textarea
-            className="answer-textarea"
+            className={styles.answerTextarea}
             value={currentAnswer}
             onChange={(e) => setCurrentAnswer(e.target.value)}
             placeholder="Ditt svar..."
@@ -206,9 +205,9 @@ const QuizPage = () => {
         )}
       </div>
 
-      <div className="button-group">
-        {!isLive && <button onClick={handleBack}>Tillbaka</button>}
-        <button onClick={handleAnswerSubmit}>Svara!</button>
+      <div className={styles.buttonGroup}>
+        {!isLive && <button className={styles.navButton} onClick={handleBack}>Tillbaka</button>}
+        <button className={styles.submitButton} onClick={handleAnswerSubmit}>Svara!</button>
       </div>
     </div>
   );

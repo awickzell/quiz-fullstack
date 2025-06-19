@@ -1,0 +1,84 @@
+.dashboardContainer {
+  max-width: 550px;
+  margin: 30px auto 0;
+  padding: 32px 16px;
+  background-color: rgba(255, 255, 255, 0.87);
+  box-shadow: 0 0 10px;
+  border-radius: 100px;
+  text-align: center;
+}
+
+.dashboardContainer h2 {
+  font-family: "Chewy", sans-serif;
+  font-size: 64px;
+  margin-bottom: 24px;
+}
+
+.dashboardContainer button {
+  width: 50%;
+  margin: 8px auto;
+  padding: 12px;
+}
+
+.dashboardButton {
+  background-color: #007bff;
+  color: white;
+  padding: 10spx;
+  font-size: 16px;
+  border-radius: 12px;
+  border: none;
+  width: 100%;
+  box-sizing: border-box;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.dashboardButton:hover {
+  background-color: #0056b3;
+}
+
+.buttonRow {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.buttonRow > button,
+.buttonRow > .searchBarContainer {
+  flex: 1;
+  min-width: 160px;
+  max-width: 220px;
+}
+.buttonRow > .searchBarContainer button {
+  width: 100%;
+}
+
+.message {
+  text-align: center;
+  margin-bottom: 16px;
+  font-weight: bold;
+}
+
+.liveQuizIndicator {
+  color: #d32f2f;
+  font-weight: bold;
+  font-size: 18px;
+  margin-top: 8px;
+  display: inline-block;
+  animation: pulse 3.5s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}

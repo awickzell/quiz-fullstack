@@ -1,0 +1,39 @@
+/* ======= LOBBY CONTAINERS ======= */
+.lobbyContainer {
+  max-width: 550px;
+  margin: 30px auto 0;
+  padding: 32px 16px;
+  background-color: rgba(255, 255, 255, 0.87);
+  box-shadow: 0 0 10px;
+  border-radius: 100px;
+  text-align: center;
+}
+
+.lobbyContainer h2 {
+  font-family: "Chewy", sans-serif;
+  font-size: 32px;
+  margin-bottom: 24px;
+}
+
+.lobbyContainer button {
+  width: 50%;
+  margin: 16px auto 0;
+  padding: 12px;
+}
+
+.pulseText {
+  animation: pulse 3s infinite;
+  display: inline-block;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}

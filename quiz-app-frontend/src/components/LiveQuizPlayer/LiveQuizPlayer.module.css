@@ -1,0 +1,116 @@
+.quizPageContainer {
+  max-width: 700px;
+  margin: 40px auto;
+  padding: 32px 24px;
+  background-color: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 0 10px;
+  border-radius: 32px;
+}
+
+.quizTitle {
+  font-family: "Chewy", sans-serif;
+  font-size: 64px;
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.quizInfo {
+  text-align: center;
+  font-size: 18px;
+  margin-bottom: 24px;
+}
+
+.liveQuizContainer {
+  background-color: #ffffff;
+  border: 2px solid #ccc;
+  border-radius: 24px;
+  padding: 20px;
+  text-align: left;
+  margin-bottom: 16px;
+}
+
+.questionTitle {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 12px;
+}
+
+.questionOptions {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.questionOption {
+  background-color: #f5f5f5;
+  padding: 10px 16px;
+  margin-bottom: 8px;
+  border-radius: 12px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.questionOption:hover {
+  background-color: #e0e0e0;
+}
+
+.selected {
+  background-color: #add8e6;
+  font-weight: bold;
+}
+
+.answerTextarea {
+  width: 100%;
+  min-height: 100px;
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 12px;
+  border: 1px solid #ccc;
+  resize: vertical;
+  box-sizing: border-box;
+  margin-top: 8px;
+}
+
+.questionItem {
+  margin-bottom: 24px;
+}
+
+.questionInput {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.buttonGroup {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.primaryButton {
+  background-color: #007bff;
+  color: white;
+  padding: 12px 24px;
+  font-size: 16px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.primaryButton:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.primaryButton:hover:not(:disabled) {
+  background-color: #0056b3;
+}
+
+.message {
+  text-align: center;
+  font-size: 18px;
+  margin-top: 24px;
+}

@@ -1,0 +1,36 @@
+.button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 16px;
+  width: 100%;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.button:hover {
+  opacity: 0.9;
+}
+
+.button.edit {
+  padding: 10px 16px;
+  margin: 15px 4px;
+  width: fit-content;
+  max-width: 100px;
+}
+
+.expanded-actions {
+  opacity: 0.9;
+  border-radius: 12px;
+  padding: 12px;
+  font-size: 16px;
+  width: 70%;
+  margin: 0 auto;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}

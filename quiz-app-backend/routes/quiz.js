@@ -124,14 +124,22 @@ router.post('/:quizId/submit', authenticateUser, async (req, res) => {
     const formattedSubmission = {
       playerName: req.user.name,
       submittedAt: new Date(),
-      answers: answers.map((answerObj) => ({
-        questionText: answerObj.questionText,
-        answer: answerObj.answer,
-        subAnswers: (answerObj.subAnswers || []).map((sub) => ({
-          subQuestionText: sub.subQuestionText,
-          subAnswer: sub.subAnswer,
-        })),
-      })),
+      answers: answers.map((answerObj, index) => {
+        const quizQuestion = quiz.questions[index];
+
+        // Begränsa antalet subAnswers till quizets subQuestions längd
+        const maxSubQuestions = quizQuestion?.subQuestions?.length || 0;
+        const safeSubAnswers = (answerObj.subAnswers || []).slice(0, maxSubQuestions);
+
+        return {
+          questionText: quizQuestion?.questionText || 'Okänd fråga',
+          answer: answerObj.answer,
+          subAnswers: safeSubAnswers.map((sub, subIndex) => ({
+            subQuestionText: quizQuestion?.subQuestions?.[subIndex]?.questionText || 'Okänd följdfråga',
+            subAnswer: sub.subAnswer,
+          })),
+        };
+      }),
     };
 
     if (quiz.isLiveQuiz) {
@@ -169,10 +177,15 @@ router.get('/:quizId/submissions', authenticateUser, async (req, res) => {
       submissions = liveSubmissions.map((submission) => {
         const answers = submission.answers.map((answerObj, index) => {
           const question = quiz.questions[index];
+
+          // Begränsa subAnswers till quizets subQuestions längd
+          const maxSubQuestions = question?.subQuestions?.length || 0;
+          const safeSubAnswers = (answerObj.subAnswers || []).slice(0, maxSubQuestions);
+
           return {
             questionText: answerObj.questionText || question?.questionText || 'Okänd fråga',
             answer: answerObj.answer || '',
-            subAnswers: (answerObj.subAnswers || []).map((subAnswerObj, subIndex) => ({
+            subAnswers: safeSubAnswers.map((subAnswerObj, subIndex) => ({
               subQuestionText: subAnswerObj.subQuestionText || question?.subQuestions?.[subIndex]?.questionText || 'Okänd följdfråga',
               subAnswer: subAnswerObj.subAnswer || '',
             })),
@@ -189,10 +202,15 @@ router.get('/:quizId/submissions', authenticateUser, async (req, res) => {
       submissions = quiz.submissions.map((submission) => {
         const answers = submission.answers.map((answerObj, index) => {
           const question = quiz.questions[index];
+
+          // Begränsa subAnswers till quizets subQuestions längd
+          const maxSubQuestions = question?.subQuestions?.length || 0;
+          const safeSubAnswers = (answerObj.subAnswers || []).slice(0, maxSubQuestions);
+
           return {
             questionText: answerObj.questionText || question?.questionText || 'Okänd fråga',
             answer: answerObj.answer || '',
-            subAnswers: (answerObj.subAnswers || []).map((subAnswerObj, subIndex) => ({
+            subAnswers: safeSubAnswers.map((subAnswerObj, subIndex) => ({
               subQuestionText: subAnswerObj.subQuestionText || question?.subQuestions?.[subIndex]?.questionText || 'Okänd följdfråga',
               subAnswer: subAnswerObj.subAnswer || '',
             })),

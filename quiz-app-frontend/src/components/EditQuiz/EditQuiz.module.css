@@ -1,0 +1,188 @@
+.editQuizContainer {
+  max-width: 550px;
+  margin: 30px auto 0;
+  padding: 32px 16px;
+  background-color: rgba(255, 255, 255, 0.87);
+  box-shadow: 0 0 10px;
+  border-radius: 100px;
+  text-align: center;
+}
+
+.editQuizContainer h2 {
+  font-family: "Chewy", sans-serif;
+  font-size: 64px;
+  margin-bottom: 24px;
+}
+
+.editQuizContainer form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.editQuestionBlock {
+  width: 100%;
+  background-color: #f8f8f8;
+  padding: 24px;
+  margin-bottom: 24px;
+  border-radius: 32px;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+  text-align: left;
+}
+
+.quizTitleInput,
+.questionTextInput,
+.optionInput,
+.subQuestionInput,
+.questionTypeSelect,
+.imageUploadInput {
+  width: 100%;
+  padding: 10px;
+  border-radius: 12px;
+  border: 1px solid #ccc;
+  margin-bottom: 12px;
+  box-sizing: border-box;
+  font-size: 16px;
+  font-family: inherit;
+}
+
+.questionTypeSelect {
+  text-align: center;
+}
+
+.optionsSection p {
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.optionItem {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.removeOptionButton,
+.removeSubQuestionButton,
+.removeQuestionButton,
+.removeImageButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  color: #d32f2f;
+  padding: 4px 8px;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.removeOptionButton:hover,
+.removeSubQuestionButton:hover,
+.removeQuestionButton:hover,
+.removeImageButton:hover {
+  background-color: #f8d7da;
+}
+
+.addOptionButton,
+.addSubQuestionButton,
+.addQuestionButton {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  cursor: pointer;
+  width: 100%;
+  max-width: 320px;
+  margin: 8px auto;
+  display: block;
+  box-sizing: border-box;
+  transition: background-color 0.3s;
+}
+
+.addOptionButton:hover,
+.addSubQuestionButton:hover,
+.addQuestionButton:hover {
+  background-color: #0056b3;
+}
+
+.imageUploadSection {
+  margin-top: 12px;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.imagePreviewContainer {
+  margin-top: 12px;
+  position: relative;
+  display: inline-block;
+}
+
+.imagePreview {
+  max-width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
+}
+
+.questionButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 24px;
+  width: 100%;
+  max-width: 320px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.primaryButton {
+  background-color: #007bff;
+  color: white;
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 12px;
+  border: none;
+  width: 100%;
+  box-sizing: border-box;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.primaryButton:hover {
+  background-color: #0056b3;
+}
+
+.secondaryButton {
+  background-color: #007bff;
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 12px;
+  border: none;
+  width: 100%;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+.secondaryButton:hover {
+  background-color: #0056b3;
+}
+
+.subQuestionBlock {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.subQuestionInput {
+  flex-grow: 1;
+}
+.editQuizContainer input,
+.editQuizContainer select,
+.editQuizContainer button {
+  font-family: inherit;
+}

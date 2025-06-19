@@ -1,8 +1,8 @@
-// HostLobby.jsx
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useSocket } from '../context/SocketContext';
+import { useSocket } from '../../context/SocketContext';
 import axios from 'axios';
+import styles from './HostLobby.module.css';
 
 const HostLobby = () => {
   const { quizId } = useParams();
@@ -49,14 +49,22 @@ const HostLobby = () => {
   };
 
   return (
-    <div className="lobby-container">
-      <h2>Lobby - Värdvy</h2>
-      <h3>Spelare som har gått med:</h3>
-      <ul>
-        {players.map((name, i) => <li key={i}>{name}</li>)}
+    <div className={styles.lobbyContainer}>
+      <h2 className={styles.heading}>Lobby</h2>
+      <h3 className={styles.subheading}>Spelare som har gått med:</h3>
+      <ul className={styles.playerList}>
+        {players.map((name, i) => <li key={i} className={styles.playerItem}>{name}</li>)}
       </ul>
-      <button onClick={startQuiz} disabled={players.length === 0 || !quiz}>Starta Quiz</button>
-      <button onClick={() => navigate("/dashboard")}>Tillbaka</button>
+      <button 
+        className={styles.startButton} 
+        onClick={startQuiz} 
+        disabled={players.length === 0 || !quiz}
+      >
+        Starta Quiz
+      </button>
+      <button className={styles.backButton} onClick={() => navigate("/dashboard")}>
+        Tillbaka
+      </button>
     </div>
   );
 };
