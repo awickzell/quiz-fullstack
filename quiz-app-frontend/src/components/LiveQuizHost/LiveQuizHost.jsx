@@ -86,7 +86,7 @@ const LiveQuizHost = () => {
 
   return (
     <div className={styles.liveQuizContainer}>
-      <h1 className={styles.quizTitle}>Live Quiz: {quiz.title}</h1>
+      <h1 className={styles.quizTitle}>{quiz.title}</h1>
       <p className={styles.playerCount}>Spelare anslutna: {players.length}</p>
 
       {quizStarted ? (
@@ -99,7 +99,7 @@ const LiveQuizHost = () => {
               Antal svar: {answerCount} / {totalPlayers}
             </p>
             {currentQuestion && (
-              <QuestionBox question={currentQuestion} index={currentIndex - 1} />
+              <QuestionBox question={currentQuestion} index={currentIndex - 1} isHost={true} />
             )}
           </div>
 

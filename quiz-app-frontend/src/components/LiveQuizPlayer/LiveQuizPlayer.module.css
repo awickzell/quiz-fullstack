@@ -1,10 +1,11 @@
 .quizPageContainer {
-  max-width: 700px;
-  margin: 40px auto;
-  padding: 32px 24px;
-  background-color: rgba(255, 255, 255, 0.92);
+  max-width: 550px;
+  margin: 30px auto 0;
+  padding: 32px 16px;
+  background-color: rgba(255, 255, 255, 0.87);
   box-shadow: 0 0 10px;
-  border-radius: 32px;
+  border-radius: 100px;
+  text-align: center;
 }
 
 .quizTitle {
@@ -39,6 +40,7 @@
   list-style: none;
   padding: 0;
   margin: 0;
+  margin-top: 12px;
 }
 
 .questionOption {
@@ -49,6 +51,7 @@
   font-size: 16px;
   cursor: pointer;
   transition: background-color 0.2s ease;
+  user-select: none;
 }
 
 .questionOption:hover {
@@ -113,4 +116,20 @@
   text-align: center;
   font-size: 18px;
   margin-top: 24px;
+}
+
+/* 🖼️ Bildfrågor – nytt */
+.imageQuestionWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.quizImage {
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  border-radius: 5px;
+  max-width: 300px;
+  height: auto;
 }

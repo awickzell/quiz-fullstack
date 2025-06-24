@@ -32,11 +32,11 @@ function QuizActions({ quiz, isCreator, token, onDelete }) {
             <button onClick={handleDelete} className="btn-delete">Radera</button>
           </>
         ) : (
-          <button onClick={() => navigate(`/player-lobby/${quiz._id}`)} className="btn-play">Spela</button>
+          <button onClick={() => navigate(`/player-lobby/${quiz._id}`)} className="btn-play">Spela!</button>
         )
       ) : (
         <>
-          <button onClick={() => navigate(`/quizzes/${quiz._id}`)} className="btn-play">Spela</button>
+          <button onClick={() => navigate(`/quizzes/${quiz._id}`)} className="btn-play">Spela!</button>
           {isCreator && (
             <>
               <button onClick={() => navigate(`/edit-quiz/${quiz._id}`)} className="btn-edit">Redigera</button>

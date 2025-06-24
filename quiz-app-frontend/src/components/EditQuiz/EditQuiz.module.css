@@ -72,9 +72,11 @@
   border: none;
   cursor: pointer;
   font-size: 18px;
+  width: 100%;
+  max-width: 180px;
   line-height: 1;
   color: #d32f2f;
-  padding: 4px 8px;
+  padding: 6px;
   border-radius: 8px;
   transition: background-color 0.2s ease;
 }
@@ -84,6 +86,7 @@
 .removeQuestionButton:hover,
 .removeImageButton:hover {
   background-color: #f8d7da;
+  box-shadow: 1px 1px;
 }
 
 .addOptionButton,
@@ -97,7 +100,7 @@
   font-size: 16px;
   cursor: pointer;
   width: 100%;
-  max-width: 320px;
+  max-width: 200px;
   margin: 8px auto;
   display: block;
   box-sizing: border-box;
@@ -123,9 +126,11 @@
 }
 
 .imagePreview {
-  max-width: 100%;
+  width: 120px;
+  height: auto;
   border-radius: 12px;
   box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
+  object-fit: cover;
 }
 
 .questionButtons {
@@ -134,7 +139,7 @@
   gap: 12px;
   margin-top: 24px;
   width: 100%;
-  max-width: 320px;
+  max-width: 220px;
   margin-left: auto;
   margin-right: auto;
 }
@@ -147,6 +152,7 @@
   border-radius: 12px;
   border: none;
   width: 100%;
+  max-width: 150px;
   box-sizing: border-box;
   cursor: pointer;
   transition: background-color 0.3s;
@@ -163,6 +169,7 @@
   border-radius: 12px;
   border: none;
   width: 100%;
+  max-width: 150px;
   box-sizing: border-box;
   cursor: pointer;
 }

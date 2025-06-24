@@ -32,7 +32,7 @@ function EditQuiz({ token }) {
 
     fetchQuiz();
   }, [quizId, token]);
-  
+
   const handleTitleChange = (e) => {
     setQuiz({ ...quiz, title: e.target.value });
   };
@@ -61,13 +61,18 @@ function EditQuiz({ token }) {
 
   const addSubQuestion = (index) => {
     const updatedQuestion = { ...quiz.questions[index] };
-    updatedQuestion.subQuestions = [...(updatedQuestion.subQuestions || []), { questionText: "" }];
+    updatedQuestion.subQuestions = [
+      ...(updatedQuestion.subQuestions || []),
+      { questionText: "" },
+    ];
     handleQuestionChange(index, updatedQuestion);
   };
 
   const removeSubQuestion = (qIndex, subIndex) => {
     const updatedQuestion = { ...quiz.questions[qIndex] };
-    updatedQuestion.subQuestions = updatedQuestion.subQuestions.filter((_, i) => i !== subIndex);
+    updatedQuestion.subQuestions = updatedQuestion.subQuestions.filter(
+      (_, i) => i !== subIndex
+    );
     handleQuestionChange(qIndex, updatedQuestion);
   };
 
@@ -87,7 +92,9 @@ function EditQuiz({ token }) {
 
   const removeOption = (qIndex, optIndex) => {
     const updatedQuestion = { ...quiz.questions[qIndex] };
-    updatedQuestion.options = updatedQuestion.options.filter((_, i) => i !== optIndex);
+    updatedQuestion.options = updatedQuestion.options.filter(
+      (_, i) => i !== optIndex
+    );
     handleQuestionChange(qIndex, updatedQuestion);
   };
 
@@ -99,12 +106,16 @@ function EditQuiz({ token }) {
     formData.append("image", file);
 
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/upload`, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/upload`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
       const imageUrl = response.data.imageUrl;
       handleQuestionFieldChange(index, "imageUrl", imageUrl);
@@ -180,7 +191,9 @@ function EditQuiz({ token }) {
 
             <select
               value={question.type}
-              onChange={(e) => handleQuestionFieldChange(index, "type", e.target.value)}
+              onChange={(e) =>
+                handleQuestionFieldChange(index, "type", e.target.value)
+              }
               className={styles.questionTypeSelect}
             >
               <option value="text">Textfråga</option>
@@ -191,7 +204,9 @@ function EditQuiz({ token }) {
             <input
               type="text"
               value={question.questionText}
-              onChange={(e) => handleQuestionFieldChange(index, "questionText", e.target.value)}
+              onChange={(e) =>
+                handleQuestionFieldChange(index, "questionText", e.target.value)
+              }
               placeholder="Frågetext"
               className={styles.questionTextInput}
             />
@@ -204,7 +219,9 @@ function EditQuiz({ token }) {
                     <input
                       type="text"
                       value={opt}
-                      onChange={(e) => handleOptionChange(index, optIndex, e.target.value)}
+                      onChange={(e) =>
+                        handleOptionChange(index, optIndex, e.target.value)
+                      }
                       className={styles.optionInput}
                     />
                     <button
@@ -216,26 +233,26 @@ function EditQuiz({ token }) {
                     </button>
                   </div>
                 ))}
-                <button type="button" onClick={() => addOption(index)} className={styles.addOptionButton}>
-                  ➕ Lägg till svarsalternativ
+                <button
+                  type="button"
+                  onClick={() => addOption(index)}
+                  className={styles.addOptionButton}
+                >
+                  Lägg till svarsalternativ
                 </button>
               </div>
             )}
 
             {question.type === "image" && (
               <div className={styles.imageUploadSection}>
-                <label>Bild:</label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => handleImageUpload(e, index)}
-                  key={question.imageUrl || `image-upload-${index}`}
-                  className={styles.imageUploadInput}
-                />
                 {question.imageUrl && (
                   <div className={styles.imagePreviewContainer}>
                     <img
-                      src={`${import.meta.env.VITE_API_URL}/${question.imageUrl}`}
+                      src={
+                        question.imageUrl.startsWith("http")
+                          ? question.imageUrl
+                          : `${import.meta.env.VITE_API_URL}/${question.imageUrl}`
+                      }
                       alt="Uppladdad"
                       className={styles.imagePreview}
                     />
@@ -246,6 +263,14 @@ function EditQuiz({ token }) {
                     >
                       Ta bort bild
                     </button>
+                    <label>Lägg till ny bild:</label>
+                    <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => handleImageUpload(e, index)}
+                    key={question.imageUrl || `image-upload-${index}`}
+                    className={styles.imageUploadInput}
+                    />
                   </div>
                 )}
               </div>
@@ -256,7 +281,9 @@ function EditQuiz({ token }) {
                 <input
                   type="text"
                   value={subQ.questionText}
-                  onChange={(e) => handleSubQuestionChange(index, subIndex, e.target.value)}
+                  onChange={(e) =>
+                    handleSubQuestionChange(index, subIndex, e.target.value)
+                  }
                   placeholder="Följdfråga"
                   className={styles.subQuestionInput}
                 />
@@ -269,25 +296,45 @@ function EditQuiz({ token }) {
                 </button>
               </div>
             ))}
-            <button type="button" onClick={() => addSubQuestion(index)} className={styles.addSubQuestionButton}>
+            <button
+              type="button"
+              onClick={() => addSubQuestion(index)}
+              className={styles.addSubQuestionButton}
+            >
               Lägg till följdfråga
             </button>
-            <button type="button" onClick={() => removeQuestion(index)} className={styles.removeQuestionButton}>
+            <button
+              type="button"
+              onClick={() => removeQuestion(index)}
+              className={styles.removeQuestionButton}
+            >
               Ta bort fråga
             </button>
           </div>
         ))}
 
-        <button type="button" onClick={addQuestion} className={styles.addQuestionButton}>
+        <button
+          type="button"
+          onClick={addQuestion}
+          className={styles.addQuestionButton}
+        >
           ➕ Lägg till ny fråga
         </button>
       </form>
 
       <div className={styles.questionButtons}>
-        <button type="button" onClick={handleSave} className={styles.primaryButton}>
+        <button
+          type="button"
+          onClick={handleSave}
+          className={styles.primaryButton}
+        >
           Spara ändringar
         </button>
-        <button type="button" onClick={() => navigate(-1)} className={styles.secondaryButton}>
+        <button
+          type="button"
+          onClick={() => navigate(-1)}
+          className={styles.secondaryButton}
+        >
           Tillbaka
         </button>
       </div>

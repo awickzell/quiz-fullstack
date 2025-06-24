@@ -46,6 +46,8 @@
 .checkboxLabel > div {
   display: flex;
   align-items: center;
+  font-size: 18px;
+  transition: font-size 0.3s ease;
 }
 
 .checkboxLabel input[type="checkbox"] {
@@ -65,6 +67,40 @@
   flex-shrink: 0;
   transition: background-color 0.2s ease;
   position: relative;
+  pointer-events: none;
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  user-select: none;
+  font-weight: bold;
+  font-size: 22px;
+  color: #d32f2f;
+  position: relative;
+}
+
+.checkboxLabel input[type="checkbox"]:checked + .customCheckbox {
+  background-color: #007bff;
+  border-color: #0056b3;
+}
+
+.checkboxLabel input[type="checkbox"]:checked + .customCheckbox::after {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 1px;
+  width: 6px;
+  height: 12px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.checkboxLabel input[type="checkbox"]:checked + .customCheckbox + div {
+  font-size: 22px;
 }
 
 .questionBlock {

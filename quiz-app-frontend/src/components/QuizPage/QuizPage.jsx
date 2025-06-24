@@ -153,28 +153,28 @@ const QuizPage = () => {
 
         {currentQuestion.type === 'multipleChoice' ? (
           <div className={styles.options}>
-           <ul className={styles.questionOptions}>
-            {currentQuestion.options?.map((option, idx) => (
-              <li
-              key={idx}
-              className={`${styles.questionOption} ${currentAnswer === option ? styles.selected : ''}`}
-              onClick={() => setCurrentAnswer(option)}
-              >
-                {option}
+            <ul className={styles.questionOptions}>
+              {currentQuestion.options?.map((option, idx) => (
+                <li
+                  key={idx}
+                  className={`${styles.questionOption} ${currentAnswer === option ? styles.selected : ''}`}
+                  onClick={() => setCurrentAnswer(option)}
+                >
+                  {option}
                 </li>
               ))}
-              </ul>
+            </ul>
           </div>
         ) : currentQuestion.type === 'image' && currentQuestion.imageUrl ? (
-          <>
-            <img src={currentQuestion.imageUrl} alt="Quiz-bild" width="300" />
+          <div className={styles.imageQuestionWrapper}>
+            <img src={currentQuestion.imageUrl} alt="Quizbild" className={styles.quizImage}/>
             <textarea
               className={styles.answerTextarea}
               value={currentAnswer}
               onChange={(e) => setCurrentAnswer(e.target.value)}
               placeholder="Ditt svar..."
             />
-          </>
+          </div>
         ) : hasSubQuestions ? (
           [currentQuestion, ...currentQuestion.subQuestions].map((q, i) => (
             <div key={i} className={styles.questionItem}>

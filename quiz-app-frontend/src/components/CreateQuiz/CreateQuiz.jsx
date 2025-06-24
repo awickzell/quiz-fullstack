@@ -92,12 +92,13 @@ const CreateQuiz = ({ token }) => {
     formData.append("image", file);
 
     try {
-      const res = await axios.post(`${import.meta.env.VITE_API_URL}/uploads`, formData, {
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/quizzes/upload-image`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${token}`,
         },
       });
+
 
       const updated = [...questions];
       updated[index].imageUrl = res.data.imageUrl;
@@ -157,7 +158,7 @@ const CreateQuiz = ({ token }) => {
             onChange={(e) => setIsLive(e.target.checked)}
           />
           <span className={styles.customCheckbox}></span>
-          <div>LIVE QUIZ</div>
+          <div>LIVEQUIZ</div>
         </label>
 
         <h3>Frågor:</h3>

@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './QuestionBox.module.css';
 
-const QuestionBox = ({ question, index }) => {
+const QuestionBox = ({ question, index, isHost = false }) => {
   return (
     <div className={styles.questionBox}>
       <h2 className={styles.questionTitle}>
@@ -16,7 +16,7 @@ const QuestionBox = ({ question, index }) => {
         </ul>
       )}
 
-      {question.type === 'text' && (
+      {question.type === 'text' && !isHost && (
         <p>Skriv ditt svar här...</p>
       )}
 

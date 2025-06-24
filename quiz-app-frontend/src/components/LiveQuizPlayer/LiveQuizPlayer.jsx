@@ -136,7 +136,7 @@ const LiveQuizPlayer = () => {
 
   return (
     <div className={styles.quizPageContainer}>
-      <h1 className={styles.quizTitle}>Live Quiz: {quiz.title}</h1>
+      <h1 className={styles.quizTitle}>{quiz.title}</h1>
       <p className={styles.quizInfo}>
         Fråga {questionMeta.currentIndex} av {questionMeta.total}
       </p>
@@ -165,6 +165,21 @@ const LiveQuizPlayer = () => {
               disabled={answerConfirmed}
               placeholder="Skriv ditt svar här..."
             />
+          ) : question.type === 'image' && question.imageUrl ? (
+            <div className={styles.imageQuestionWrapper}>
+              <img
+                src={question.imageUrl}
+                alt="Quizbild"
+                className={styles.quizImage}
+              />
+              <textarea
+                className={styles.answerTextarea}
+                value={answer}
+                onChange={(e) => setAnswer(e.target.value)}
+                disabled={answerConfirmed}
+                placeholder="Skriv ditt svar här..."
+              />
+            </div>
           ) : null}
 
           {question.subQuestions?.length > 0 && (

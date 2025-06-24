@@ -1,12 +1,11 @@
 .submissionsContainer {
-  max-width: 700px;
-  margin: 40px auto;
-  padding: 32px 24px;
-  background-color: rgba(255, 255, 255, 0.95);
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-  border-radius: 32px;
+  max-width: 550px;
+  margin: 30px auto 0;
+  padding: 32px 16px;
+  background-color: rgba(255, 255, 255, 0.87);
+  box-shadow: 0 0 10px;
+  border-radius: 100px;
   text-align: center;
-  font-family: Arial, sans-serif;
 }
 
 .submissionsTitle {
