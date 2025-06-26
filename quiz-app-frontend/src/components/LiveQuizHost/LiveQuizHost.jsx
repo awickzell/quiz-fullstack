@@ -16,6 +16,7 @@ const LiveQuizHost = () => {
   const [answerCount, setAnswerCount] = useState(0);
   const [totalPlayers, setTotalPlayers] = useState(0);
   const [players, setPlayers] = useState([]);
+  const [answeredPlayerIds, setAnsweredPlayerIds] = useState([]);
   const [quizStarted, setQuizStarted] = useState(false);
 
   useEffect(() => {
@@ -44,19 +45,23 @@ const LiveQuizHost = () => {
     socket.emit('host-quiz', { quizId, quizData: quiz });
 
     socket.on('lobby-update', ({ players }) => {
-      setPlayers(players);
+      setPlayers(players); 
       setTotalPlayers(players.length);
     });
 
-    socket.on('answer-count-update', ({ count, totalPlayers }) => {
+
+    socket.on('answer-count-update', ({ count, totalPlayers, answeredPlayers }) => {
       setAnswerCount(count);
       setTotalPlayers(totalPlayers);
+      setAnsweredPlayerIds(answeredPlayers || []);
     });
+
 
     socket.on('quiz-started', () => {
       setQuizStarted(true);
       setCurrentIndex(1);
       setAnswerCount(0);
+      setAnsweredPlayerIds([]);
     });
 
     return () => {
@@ -72,6 +77,7 @@ const LiveQuizHost = () => {
     socket.emit('next-question', { quizId, questionIndex: index });
     setCurrentIndex(index + 1);
     setAnswerCount(0);
+    setAnsweredPlayerIds([]);
   };
 
   const endQuiz = () => {
@@ -98,6 +104,20 @@ const LiveQuizHost = () => {
             <p className={styles.answerStatus}>
               Antal svar: {answerCount} / {totalPlayers}
             </p>
+
+
+            <div className={styles.answeredPlayers}>
+              {players.map((playerName, idx) => (
+                <span key={`${playerName}-${idx}`}
+                className={`${styles.playerName} ${
+                  answeredPlayerIds.includes(playerName) ? styles.answered : styles.notAnswered
+                }`}
+                >
+                  {playerName}
+                  </span>
+                ))}
+            </div>
+
             {currentQuestion && (
               <QuestionBox question={currentQuestion} index={currentIndex - 1} isHost={true} />
             )}

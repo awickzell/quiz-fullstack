@@ -136,46 +136,48 @@ export const setupLiveQuizHandlers = (io, socket) => {
     }
   });
 
-  socket.on('submit-answer', ({ quizId, playerId, answerData }) => {
+  socket.on('submit-answer', ({ quizId, playerId, playerName, answerData }) => {
     const session = liveQuizSessions.get(quizId);
     const player = session?.players.get(playerId);
-    
+
     if (!session || !player) return;
-    
-    if (!session.currentQuestionAnswers.has(playerId)) {
-      session.currentQuestionAnswers.set(playerId, answerData);
-      
-      const question = session.quiz.questions[session.currentQuestionIndex];
-      
-      let playerEntry = session.answers.find(entry => entry.playerName === player.playerName);
-      
-      if (!playerEntry) {
-        playerEntry = {
-          playerName: player.playerName,
-          answerData: [],
-        };
-        session.answers.push(playerEntry);
-      }
-      
-      playerEntry.answerData.push({
-        ...answerData,
-        questionId: answerData.questionId || question?._id || null,
-      });
-      
-      const update = {
-        count: session.currentQuestionAnswers.size,
-        totalPlayers: session.players.size,
+    if (session.currentQuestionAnswers.has(playerId)) return;
+
+    session.currentQuestionAnswers.set(playerId, answerData);
+
+    const question = session.quiz.questions[session.currentQuestionIndex];
+
+    let playerEntry = session.answers.find(entry => entry.playerName === player.playerName);
+    if (!playerEntry) {
+      playerEntry = {
+        playerName: player.playerName,
+        answerData: [],
       };
-      
-      io.to(quizId).emit('answer-count-update', update);
-      io.to(player.socketId).emit('answer-confirmed');
+      session.answers.push(playerEntry);
     }
+
+    playerEntry.answerData.push({
+      ...answerData,
+      questionId: answerData.questionId || question?._id || null,
+    });
+
+    const answeredPlayers = Array.from(session.currentQuestionAnswers.keys())
+      .map(id => session.players.get(id)?.playerName)
+      .filter(Boolean);
+
+    io.to(quizId).emit('answer-count-update', {
+      count: session.currentQuestionAnswers.size,
+      totalPlayers: session.players.size,
+      answeredPlayers,
+    });
+
+    io.to(player.socketId).emit('answer-confirmed');
   });
-  
+
   socket.on('end-quiz', async ({ quizId }) => {
     const session = liveQuizSessions.get(quizId);
     if (!session) return;
-    
+
     try {
       for (const { playerName, answerData } of session.answers) {
         const structuredAnswers = (Array.isArray(answerData) ? answerData : []).map(ans => {
@@ -184,37 +186,36 @@ export const setupLiveQuizHandlers = (io, socket) => {
             const aId = ans.questionId?.toString?.();
             return qId && aId && qId === aId;
           });
-          
+
           return {
             questionText: question?.questionText || 'Okänd fråga',
             answer: ans.answer || '',
             correct: ans.correct ?? false,
             subAnswers: Array.isArray(ans.subAnswers)
-            ? ans.subAnswers.map(sub => ({
-              subQuestionText: sub.subQuestionText || '',
-              subAnswer: sub.subAnswer || '',
-              correct: sub.correct ?? false,
-            }))
-            : [],
+              ? ans.subAnswers.map(sub => ({
+                  subQuestionText: sub.subQuestionText || '',
+                  subAnswer: sub.subAnswer || '',
+                  correct: sub.correct ?? false,
+                }))
+              : [],
           };
         });
-        
+
         const newResponse = new QuizResponse({
           quiz: quizId,
           playerName,
           answers: structuredAnswers,
         });
-        
+
         await newResponse.save();
       }
-      
+
       io.to(quizId).emit('quiz-ended', { summary: session.answers });
       liveQuizSessions.delete(quizId);
     } catch (error) {
       console.error('Fel vid sparande av livequiz-svar:', error);
     }
   });
-
 
   socket.on('disconnect', () => {
     for (const [quizId, session] of liveQuizSessions.entries()) {
