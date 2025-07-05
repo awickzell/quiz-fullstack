@@ -131,7 +131,7 @@ const QuizPage = () => {
 
   if (submitted) {
     return (
-      <div className={styles.quizSubmittedContainer}>
+      <div className={styles.submittedContainerWrapper}>
         <h2 className={styles.submittedTitle}>Tack för dina svar!</h2>
         <button className={styles.submittedButton} onClick={() => navigate('/dashboard')}>
           Tillbaka till startsidan
@@ -149,7 +149,9 @@ const QuizPage = () => {
       {!isLive && <h2 className={styles.quizSubtitle}>Fråga {currentIndex + 1} av {quiz.questions.length}</h2>}
 
       <div className={styles.questionBlock}>
-        <h4 className={styles.questionText}>{currentQuestion.questionText}</h4>
+        {!hasSubQuestions && (
+          <h4 className={styles.questionText}>{currentQuestion.questionText}</h4>
+        )}
 
         {currentQuestion.type === 'multipleChoice' ? (
           <div className={styles.options}>
@@ -167,7 +169,7 @@ const QuizPage = () => {
           </div>
         ) : currentQuestion.type === 'image' && currentQuestion.imageUrl ? (
           <div className={styles.imageQuestionWrapper}>
-            <img src={currentQuestion.imageUrl} alt="Quizbild" className={styles.quizImage}/>
+            <img src={currentQuestion.imageUrl} alt="Quizbild" className={styles.quizImage} />
             <textarea
               className={styles.answerTextarea}
               value={currentAnswer}
@@ -176,25 +178,32 @@ const QuizPage = () => {
             />
           </div>
         ) : hasSubQuestions ? (
-          [currentQuestion, ...currentQuestion.subQuestions].map((q, i) => (
-            <div key={i} className={styles.questionItem}>
-              <h4>{String.fromCharCode(65 + i)}. {q.questionText}</h4>
+          <>
+            <div className={styles.questionItem}>
+              <h4>A. {currentQuestion.questionText}</h4>
               <textarea
                 className={styles.answerTextarea}
-                value={i === 0 ? currentAnswer : subAnswers[i - 1] || ''}
-                onChange={(e) => {
-                  if (i === 0) {
-                    setCurrentAnswer(e.target.value);
-                  } else {
-                    const updated = [...subAnswers];
-                    updated[i - 1] = e.target.value;
-                    setSubAnswers(updated);
-                  }
-                }}
+                value={currentAnswer}
+                onChange={(e) => setCurrentAnswer(e.target.value)}
                 placeholder="Ditt svar..."
               />
             </div>
-          ))
+            {currentQuestion.subQuestions.map((q, i) => (
+              <div key={i} className={styles.questionItem}>
+                <h4>{String.fromCharCode(66 + i)}. {q.questionText}</h4>
+                <textarea
+                  className={styles.answerTextarea}
+                  value={subAnswers[i] || ''}
+                  onChange={(e) => {
+                    const updated = [...subAnswers];
+                    updated[i] = e.target.value;
+                    setSubAnswers(updated);
+                  }}
+                  placeholder="Ditt svar..."
+                />
+              </div>
+            ))}
+          </>
         ) : (
           <textarea
             className={styles.answerTextarea}

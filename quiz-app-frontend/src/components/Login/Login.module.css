@@ -24,3 +24,49 @@
   align-items: center;
   width: 100%;
 }
+
+/* ======= Responsivt: max 768px ======= */
+@media (max-width: 768px) {
+  .loginContainer {
+    padding: 24px 16px;
+    border-radius: 80px;
+    margin: 25px auto 0;
+  }
+
+  .loginContainer h2 {
+    font-size: 64px;
+  }
+
+  .loginContainer p {
+    font-size: 18px;
+    padding: 0 12px;
+  }
+
+  .loginContainer form {
+    width: 100%;
+    padding: 0 12px;
+  }
+}
+
+/* ======= Responsivt: max 500px ======= */
+@media (max-width: 500px) {
+  .loginContainer {
+    padding: 16px 12px;
+    border-radius: 60px;
+    margin: 20px auto 0;
+  }
+
+  .loginContainer h2 {
+    font-size: 48px;
+  }
+
+  .loginContainer p {
+    font-size: 16px;
+    padding: 0 8px;
+  }
+
+  .loginContainer form {
+    width: 100%;
+    padding: 0 8px;
+  }
+}

@@ -79,8 +79,12 @@ const LiveQuizPlayer = () => {
     };
 
     const handleQuizEnded = () => {
-      alert('Quizet har avslutats');
-      navigate('/dashboard');
+      setWaitingText('Quizet har avslutats av värden.');
+      setQuestion(null);
+
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 3000);
     };
 
     const handleError = (error) => {
@@ -222,7 +226,11 @@ const LiveQuizPlayer = () => {
           )}
         </div>
       ) : (
-        <p className={styles.message}>{waitingText}</p>
+        waitingText && (
+          <div className={styles.warningBox}>
+            {waitingText}
+          </div>
+        )
       )}
     </div>
   );

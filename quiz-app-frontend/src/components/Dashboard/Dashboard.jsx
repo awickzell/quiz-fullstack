@@ -79,12 +79,11 @@ function Dashboard({ token, onLogout }) {
             const isExpanded = expandedQuizId === quiz._id;
 
             return (
-              <li
-                key={quiz._id}
-                className={`${styles.quizItem} ${isExpanded ? styles.expanded : ""}`}
-                onClick={() => toggleExpand(quiz._id)}
-                style={{ cursor: "pointer" }}
-              >
+            <li key={quiz._id}
+            className={`${styles.quizItem} ${isExpanded ? styles.expanded : ""}`}
+            onClick={() => toggleExpand(quiz._id)}
+            >
+
                 <strong className={styles.quizTitle}>{quiz.title}</strong>
                 <p className={styles.quizCreator}>
                   {quiz.createdBy?.name

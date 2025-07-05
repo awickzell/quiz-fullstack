@@ -1,4 +1,3 @@
-/* ======= Register.module.css ======= */
 .registerContainer {
   max-width: 550px;
   margin: 30px auto;
@@ -93,5 +92,71 @@
 @keyframes spin {
   to {
     transform: rotate(360deg);
+  }
+}
+
+/* ======= Responsivt: max 768px ======= */
+@media (max-width: 768px) {
+  .registerContainer {
+    max-width: 90%;
+    padding: 24px 12px;
+    border-radius: 60px;
+  }
+
+  .registerContainer h2 {
+    font-size: 48px;
+    margin-bottom: 20px;
+  }
+
+  .input {
+    width: 80%;
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  .submitButton,
+  .backButton {
+    width: 70%;
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  .message {
+    font-size: 14px;
+  }
+}
+
+/* ======= Responsivt: max 500px ======= */
+@media (max-width: 500px) {
+  .registerContainer {
+    padding: 16px 10px;
+    border-radius: 40px;
+  }
+
+  .registerContainer h2 {
+    font-size: 36px;
+    margin-bottom: 16px;
+  }
+
+  .input {
+    width: 90%;
+    font-size: 12px;
+    padding: 8px;
+  }
+
+  .submitButton,
+  .backButton {
+    width: 90%;
+    font-size: 12px;
+    padding: 8px;
+  }
+
+  .message {
+    font-size: 12px;
+  }
+
+  .spinner {
+    width: 30px;
+    height: 30px;
   }
 }

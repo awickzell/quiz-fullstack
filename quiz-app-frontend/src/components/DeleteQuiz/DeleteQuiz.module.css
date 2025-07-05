@@ -44,3 +44,143 @@
     transform: translateY(-10px);
   }
 }
+
+.modalBackdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeInBackdrop 0.3s ease-in-out;
+}
+
+@keyframes fadeInBackdrop {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modal {
+  background-color: #ffffff;
+  padding: 2rem;
+  border-radius: 32px;
+  width: 90%;
+  max-width: 420px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  animation: scaleIn 0.25s ease-out;
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.modal h3 {
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.modal p {
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+  color: #444;
+}
+
+.modalButtons {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.confirmButton,
+.cancelButton {
+  flex: 1;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.confirmButton {
+  background-color: #d9534f;
+  color: white;
+}
+
+.confirmButton:hover {
+  background-color: #c9302c;
+}
+
+.cancelButton {
+  background-color: #f1f1f1;
+  color: #333;
+}
+
+.cancelButton:hover {
+  background-color: #e2e2e2;
+}
+
+/* ======= RESPONSIVE STYLES ======= */
+
+/* Max 768px */
+@media (max-width: 768px) {
+  .deleteQuizContainer {
+    padding: 24px 12px;
+    border-radius: 60px;
+    margin: 20px auto 0;
+  }
+
+  .deleteMessage {
+    max-width: 60%;
+    font-size: 15px;
+    padding: 0.5rem;
+  }
+}
+
+/* Max 500px */
+@media (max-width: 500px) {
+  .deleteQuizContainer {
+    padding: 16px 8px;
+    border-radius: 40px;
+    margin: 16px auto 0;
+  }
+
+  .deleteMessage {
+    max-width: 90%;
+    font-size: 14px;
+    padding: 0.5rem;
+  }
+
+  .modal {
+    padding: 1.5rem 1rem;
+    border-radius: 24px;
+  }
+
+  .modal h3 {
+    font-size: 1.2rem;
+  }
+
+  .modal p {
+    font-size: 0.95rem;
+  }
+
+  .confirmButton,
+  .cancelButton {
+    font-size: 0.95rem;
+    padding: 0.6rem;
+  }
+}

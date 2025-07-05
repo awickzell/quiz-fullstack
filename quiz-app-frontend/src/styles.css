@@ -92,3 +92,51 @@ li a {
     transform: scale(1);
   }
 }
+
+/* ======= RESPONSIVE STYLES ======= */
+
+/* Max 768px */
+@media (max-width: 768px) {
+  input {
+    width: 80%;
+    font-size: 15px;
+  }
+
+  button {
+    width: 60%;
+    font-size: 15px;
+  }
+
+  li {
+    width: 80%;
+    padding: 14px;
+    border-radius: 40px;
+  }
+
+  .pulse-text {
+    font-size: 64px;
+  }
+}
+
+/* Max 500px */
+@media (max-width: 500px) {
+  input {
+    width: 100%;
+    font-size: 14px;
+  }
+
+  button {
+    width: 80%;
+    font-size: 14px;
+  }
+
+  li {
+    width: 95%;
+    padding: 12px;
+    border-radius: 30px;
+  }
+
+  .pulse-text {
+    font-size: 48px;
+  }
+}

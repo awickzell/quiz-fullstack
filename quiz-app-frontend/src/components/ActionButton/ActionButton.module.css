@@ -34,3 +34,43 @@
   align-items: center;
   justify-content: center;
 }
+/* ======= RESPONSIVE STYLES ======= */
+
+/* Max 768px */
+@media (max-width: 768px) {
+  .button {
+    font-size: 15px;
+  }
+
+  .button.edit {
+    padding: 8px 12px;
+    margin: 12px 4px;
+    max-width: 90px;
+  }
+
+  .expanded-actions {
+    width: 90%;
+    font-size: 15px;
+    padding: 10px;
+  }
+}
+
+/* Max 500px */
+@media (max-width: 500px) {
+  .button {
+    font-size: 14px;
+  }
+
+  .button.edit {
+    padding: 6px 10px;
+    margin: 10px 2px;
+    max-width: 80px;
+    font-size: 14px;
+  }
+
+  .expanded-actions {
+    width: 100%;
+    font-size: 14px;
+    padding: 8px;
+  }
+}

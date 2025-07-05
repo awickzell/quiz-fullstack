@@ -6,7 +6,7 @@ import upload from '../middlewares/upload.js';
 
 const router = express.Router();
 
-// Bilduppladdning
+// ----------------- Bilduppladdning -----------------
 router.post('/upload-image', authenticateUser, upload.single('image'), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ message: 'Ingen bild bifogades.' });
@@ -16,7 +16,7 @@ router.post('/upload-image', authenticateUser, upload.single('image'), (req, res
   res.status(200).json({ imageUrl });
 });
 
-// POST – Skapa ett quiz
+// ----------------- Skapa nytt quiz -----------------
 router.post('/', authenticateUser, async (req, res) => {
   const { title, questions, isLiveQuiz } = req.body;
 
@@ -40,7 +40,7 @@ router.post('/', authenticateUser, async (req, res) => {
   }
 });
 
-// GET – Hämta alla quiz
+// ----------------- Hämta alla quiz -----------------
 router.get('/', authenticateUser, async (req, res) => {
   try {
     const quizzes = await Quiz.find().populate('createdBy', 'name _id');
@@ -51,7 +51,7 @@ router.get('/', authenticateUser, async (req, res) => {
   }
 });
 
-// GET – Hämta ett specifikt quiz
+// ----------------- Hämta ett specifikt quiz -----------------
 router.get('/:quizId', authenticateUser, async (req, res) => {
   try {
     const quiz = await Quiz.findById(req.params.quizId);
@@ -63,7 +63,7 @@ router.get('/:quizId', authenticateUser, async (req, res) => {
   }
 });
 
-// DELETE – Radera ett quiz
+// ----------------- Radera quiz -----------------
 router.delete('/:quizId', authenticateUser, async (req, res) => {
   try {
     const quiz = await Quiz.findById(req.params.quizId);
@@ -73,7 +73,7 @@ router.delete('/:quizId', authenticateUser, async (req, res) => {
     }
 
     await Quiz.findByIdAndDelete(req.params.quizId);
-    await QuizResponse.deleteMany({ quiz: quiz._id }); // Ta bort submissions också
+    await QuizResponse.deleteMany({ quiz: quiz._id }); // Ta bort live submissions också
     res.status(200).json({ message: 'Quiz raderat.' });
   } catch (err) {
     console.error('Fel vid radering av quiz:', err);
@@ -81,7 +81,7 @@ router.delete('/:quizId', authenticateUser, async (req, res) => {
   }
 });
 
-// PUT – Redigera quiz
+// ----------------- Uppdatera quiz -----------------
 router.put('/:quizId', authenticateUser, async (req, res) => {
   const { title, questions, isLiveQuiz } = req.body;
 
@@ -108,7 +108,7 @@ router.put('/:quizId', authenticateUser, async (req, res) => {
   }
 });
 
-// POST – Skicka in quizsvar
+// ----------------- Skicka in svar -----------------
 router.post('/:quizId/submit', authenticateUser, async (req, res) => {
   const { quizId } = req.params;
   const { answers } = req.body;
@@ -126,8 +126,6 @@ router.post('/:quizId/submit', authenticateUser, async (req, res) => {
       submittedAt: new Date(),
       answers: answers.map((answerObj, index) => {
         const quizQuestion = quiz.questions[index];
-
-        // Begränsa antalet subAnswers till quizets subQuestions längd
         const maxSubQuestions = quizQuestion?.subQuestions?.length || 0;
         const safeSubAnswers = (answerObj.subAnswers || []).slice(0, maxSubQuestions);
 
@@ -160,75 +158,94 @@ router.post('/:quizId/submit', authenticateUser, async (req, res) => {
   }
 });
 
-// GET – Hämta alla submissions (för rättning)
+// ----------------- Hämta submissions (ENDAST för vanliga quiz) -----------------
 router.get('/:quizId/submissions', authenticateUser, async (req, res) => {
   try {
     const quiz = await Quiz.findById(req.params.quizId);
     if (!quiz) return res.status(404).json({ message: 'Quizet hittades inte.' });
 
+    if (quiz.isLiveQuiz) {
+      return res.status(400).json({ message: 'Det här är ett livequiz. Använd /live/:quizId/submissions istället.' });
+    }
+
     if (quiz.createdBy.toString() !== req.user._id.toString()) {
       return res.status(403).json({ message: 'Du har inte rätt att se dessa submissions.' });
     }
 
-    let submissions = [];
-
-    if (quiz.isLiveQuiz) {
-      const liveSubmissions = await QuizResponse.find({ quiz: quiz._id });
-      submissions = liveSubmissions.map((submission) => {
-        const answers = submission.answers.map((answerObj, index) => {
-          const question = quiz.questions[index];
-
-          // Begränsa subAnswers till quizets subQuestions längd
-          const maxSubQuestions = question?.subQuestions?.length || 0;
-          const safeSubAnswers = (answerObj.subAnswers || []).slice(0, maxSubQuestions);
-
-          return {
-            questionText: answerObj.questionText || question?.questionText || 'Okänd fråga',
-            answer: answerObj.answer || '',
-            subAnswers: safeSubAnswers.map((subAnswerObj, subIndex) => ({
-              subQuestionText: subAnswerObj.subQuestionText || question?.subQuestions?.[subIndex]?.questionText || 'Okänd följdfråga',
-              subAnswer: subAnswerObj.subAnswer || '',
-            })),
-          };
-        });
+    const submissions = quiz.submissions.map((submission) => {
+      const answers = submission.answers.map((answerObj, index) => {
+        const question = quiz.questions[index];
+        const maxSubQuestions = question?.subQuestions?.length || 0;
+        const safeSubAnswers = (answerObj.subAnswers || []).slice(0, maxSubQuestions);
 
         return {
-          playerName: submission.playerName,
-          submittedAt: submission.submittedAt,
-          answers,
+          questionText: answerObj.questionText || question?.questionText || 'Okänd fråga',
+          answer: answerObj.answer || '',
+          subAnswers: safeSubAnswers.map((subAnswerObj, subIndex) => ({
+            subQuestionText: subAnswerObj.subQuestionText || question?.subQuestions?.[subIndex]?.questionText || 'Okänd följdfråga',
+            subAnswer: subAnswerObj.subAnswer || '',
+          })),
         };
       });
-    } else {
-      submissions = quiz.submissions.map((submission) => {
-        const answers = submission.answers.map((answerObj, index) => {
-          const question = quiz.questions[index];
 
-          // Begränsa subAnswers till quizets subQuestions längd
-          const maxSubQuestions = question?.subQuestions?.length || 0;
-          const safeSubAnswers = (answerObj.subAnswers || []).slice(0, maxSubQuestions);
-
-          return {
-            questionText: answerObj.questionText || question?.questionText || 'Okänd fråga',
-            answer: answerObj.answer || '',
-            subAnswers: safeSubAnswers.map((subAnswerObj, subIndex) => ({
-              subQuestionText: subAnswerObj.subQuestionText || question?.subQuestions?.[subIndex]?.questionText || 'Okänd följdfråga',
-              subAnswer: subAnswerObj.subAnswer || '',
-            })),
-          };
-        });
-
-        return {
-          playerName: submission.playerName,
-          submittedAt: submission.submittedAt,
-          answers,
-        };
-      });
-    }
+      return {
+        playerName: submission.playerName,
+        submittedAt: submission.submittedAt,
+        answers,
+      };
+    });
 
     res.status(200).json({ submissions });
   } catch (err) {
     console.error('Fel vid hämtning av submissions:', err);
     res.status(500).json({ message: 'Kunde inte hämta submissions.' });
+  }
+});
+
+// ----------------- Hämta submissions för LIVEQUIZ -----------------
+router.get('/live/:quizId/submissions', authenticateUser, async (req, res) => {
+  try {
+    const quiz = await Quiz.findById(req.params.quizId);
+    if (!quiz) return res.status(404).json({ message: 'Quizet hittades inte.' });
+
+    if (!quiz.isLiveQuiz) {
+      return res.status(400).json({ message: 'Det här är inte ett livequiz.' });
+    }
+
+    if (quiz.createdBy.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: 'Du har inte rätt att se dessa submissions.' });
+    }
+
+    const liveSubmissions = await QuizResponse.find({ quiz: quiz._id });
+
+    const submissions = liveSubmissions.map((submission) => {
+      const answers = submission.answers.map((answerObj, index) => {
+        const question = quiz.questions[index];
+        const maxSubQuestions = question?.subQuestions?.length || 0;
+        const safeSubAnswers = (answerObj.subAnswers || []).slice(0, maxSubQuestions);
+
+        return {
+          questionText: answerObj.questionText || question?.questionText || 'Okänd fråga',
+          answer: answerObj.answer || '',
+          answerTime: answerObj.responseTime || null,   // Här lägger vi till svarstiden
+          subAnswers: safeSubAnswers.map((subAnswerObj, subIndex) => ({
+            subQuestionText: subAnswerObj.subQuestionText || question?.subQuestions?.[subIndex]?.questionText || 'Okänd följdfråga',
+            subAnswer: subAnswerObj.subAnswer || '',
+          })),
+        };
+      });
+
+      return {
+        playerName: submission.playerName,
+        submittedAt: submission.submittedAt,
+        answers,
+      };
+    });
+
+    res.status(200).json({ submissions });
+  } catch (err) {
+    console.error('Fel vid hämtning av live submissions:', err);
+    res.status(500).json({ message: 'Kunde inte hämta live submissions.' });
   }
 });
 

@@ -116,27 +116,133 @@
   font-weight: bold;
 }
 
-.quizSubmittedContainer {
+.submittedContainerWrapper {
+  max-width: 550px;
+  margin: 30px auto 0;
+  padding: 32px 16px;
+  background-color: rgba(255, 255, 255, 0.87);
+  box-shadow: 0 0 10px;
+  border-radius: 100px;
   text-align: center;
-  margin-top: 80px;
 }
 
 .submittedTitle {
-  font-size: 2rem;
-  margin-bottom: 20px;
+  font-family: "Chewy", sans-serif;
+  font-size: 64px;
+  margin-bottom: 24px;
+  color: #000;
 }
 
 .submittedButton {
-  padding: 12px 24px;
-  font-size: 1rem;
-  border: none;
-  border-radius: 12px;
-  background-color: #1976d2;
+  background-color: #007bff;
   color: white;
+  padding: 10spx;
+  font-size: 16px;
+  border-radius: 12px;
+  border: none;
+  width: 40%;
+  box-sizing: border-box;
   cursor: pointer;
-  max-width: 16%;
+  transition: background-color 0.3s;
 }
 
 .submittedButton:hover {
   background-color: #115293;
+}
+
+/* ======= Responsivt: max 768px ======= */
+@media (max-width: 768px) {
+  .quizPageContainer {
+    padding: 24px 16px;
+    border-radius: 24px;
+    max-width: 93%;
+  }
+
+  .quizTitle {
+    font-size: 48px;
+    margin-bottom: 12px;
+  }
+
+  .quizSubtitle {
+    font-size: 18px;
+    margin-bottom: 20px;
+  }
+
+  .questionText {
+    font-size: 16px;
+  }
+
+  .answerTextarea {
+    width: 100%;
+  }
+
+  .quizImage {
+    max-width: 240px;
+  }
+
+  .navButton,
+  .submitButton {
+    max-width: 45%;
+    font-size: 14px;
+    padding: 10px 20px;
+  }
+
+  .submittedButton {
+    max-width: 24%;
+    font-size: 0.9rem;
+    padding: 10px 20px;
+  }
+}
+
+/* ======= Responsivt: max 500px ======= */
+@media (max-width: 500px) {
+  .quizPageContainer {
+    margin: 20px auto;
+    padding: 16px 12px;
+    border-radius: 16px;
+    max-width: 93%;
+  }
+
+  .quizTitle {
+    font-size: 36px;
+    margin-bottom: 10px;
+  }
+
+  .quizSubtitle {
+    font-size: 16px;
+    margin-bottom: 16px;
+  }
+
+  .questionText {
+    font-size: 14px;
+  }
+
+  .answerTextarea {
+    width: 100%;
+    font-size: 14px;
+  }
+
+  .quizImage {
+    max-width: 180px;
+  }
+
+  .navButton,
+  .submitButton {
+    max-width: 40%;
+    font-size: 14px;
+    padding: 10px 16px;
+  }
+
+  .buttonGroup {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2px;
+  }
+
+  .submittedButton {
+    max-width: 50%;
+    font-size: 0.9rem;
+    padding: 10px 16px;
+  }
 }

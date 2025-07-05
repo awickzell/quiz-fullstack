@@ -38,3 +38,41 @@
   border-color: #339af0;
   font-weight: bold;
 }
+
+/* ======= Responsivt: max 768px ======= */
+@media (max-width: 768px) {
+  .liveQuizHost .QuestionBox {
+    padding: 18px;
+    margin-bottom: 16px;
+  }
+
+  .liveQuizHost .questionTitle {
+    font-size: 22px;
+    margin-bottom: 12px;
+  }
+
+  .liveQuizPlayer .questionOption {
+    padding: 10px 14px;
+    font-size: 15px;
+    margin-bottom: 8px;
+  }
+}
+
+/* ======= Responsivt: max 500px ======= */
+@media (max-width: 500px) {
+  .liveQuizHost .QuestionBox {
+    padding: 14px;
+    margin-bottom: 12px;
+  }
+
+  .liveQuizHost .questionTitle {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+
+  .liveQuizPlayer .questionOption {
+    padding: 8px 12px;
+    font-size: 14px;
+    margin-bottom: 6px;
+  }
+}

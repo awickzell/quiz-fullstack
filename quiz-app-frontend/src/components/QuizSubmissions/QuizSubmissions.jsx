@@ -6,6 +6,7 @@ import styles from "./QuizSubmissions.module.css";
 function QuizSubmissions() {
   const { quizId } = useParams();
   const [submissions, setSubmissions] = useState([]);
+  const [quizQuestions, setQuizQuestions] = useState([]); // <-- nytt
   const [error, setError] = useState("");
   const [manualCorrections, setManualCorrections] = useState({});
   const navigate = useNavigate();
@@ -46,8 +47,30 @@ function QuizSubmissions() {
       }
     };
 
+    const fetchQuiz = async () => {
+      try {
+        const quizRes = await axios.get(
+          `${import.meta.env.VITE_API_URL}/quizzes/${quizId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${storedToken}`,
+            },
+          }
+        );
+        setQuizQuestions(quizRes.data?.quiz?.questions || []);
+      } catch (err) {
+        console.error("Fel vid hämtning av quiz:", err);
+      }
+    };
+
     fetchSubmissions();
+    fetchQuiz();
   }, [quizId, storedToken]);
+
+  const getQuestionTextById = (id) => {
+    const found = quizQuestions.find((q) => q._id === id);
+    return found?.questionText || "Okänd fråga";
+  };
 
   const handleMark = (submissionIndex, answerIndex, value, isSub = false, subIndex = null) => {
     setManualCorrections((prev) => {
@@ -104,32 +127,31 @@ function QuizSubmissions() {
               <ul className={styles.submissionAnswers}>
                 {submission.answers.map((answer, aIndex) => {
                   const currentCorrection = manualCorrections[sIndex]?.[aIndex];
+                  const questionText = answer.questionText || getQuestionTextById(answer.questionId);
 
                   return (
                     <li key={aIndex} className={styles.submissionAnswerItem}>
-                      <strong>Fråga:</strong> {answer.questionText} <br />
+                      <strong>Fråga:</strong> {questionText} <br />
                       <strong>Svar:</strong> {answer.answer || "–"}
 
                       <div className={styles.mainAnswerButtons}>
                         <button
-                        className={`${styles.correctBtn} ${
-                          currentCorrection?.isCorrect === true ? styles.correctBtnActive
-                          : ""
-                        }`}
-                        onClick={() => handleMark(sIndex, aIndex, true)}
+                          className={`${styles.correctBtn} ${
+                            currentCorrection?.isCorrect === true ? styles.correctBtnActive : ""
+                          }`}
+                          onClick={() => handleMark(sIndex, aIndex, true)}
                         >
                           ✔️
-                          </button>
-                          <button
+                        </button>
+                        <button
                           className={`${styles.incorrectBtn} ${
                             currentCorrection?.isCorrect === false ? styles.incorrectBtnActive : ""
                           }`}
                           onClick={() => handleMark(sIndex, aIndex, false)}
-                          >
-                            ❌
-                            </button>
-                            </div>
-
+                        >
+                          ❌
+                        </button>
+                      </div>
 
                       {Array.isArray(answer.subAnswers) &&
                         answer.subAnswers.length > 0 && (
@@ -139,15 +161,13 @@ function QuizSubmissions() {
                                 currentCorrection?.subAnswers?.[subIndex];
                               return (
                                 <li key={subIndex} className={styles.subAnswerItem}>
-                                  <strong>Fråga:</strong> {sub.subQuestionText} <br />
+                                  <strong>Fråga:</strong> {sub.subQuestionText || "Okänd följdfråga"} <br />
                                   <strong>Svar:</strong> {sub.subAnswer || "–"}
 
                                   <div className={styles.buttonGroup}>
                                     <button
                                       className={`${styles.correctBtn} ${
-                                        subMark === true
-                                          ? styles.correctBtnActive
-                                          : ""
+                                        subMark === true ? styles.correctBtnActive : ""
                                       }`}
                                       onClick={() =>
                                         handleMark(sIndex, aIndex, true, true, subIndex)
@@ -157,9 +177,7 @@ function QuizSubmissions() {
                                     </button>
                                     <button
                                       className={`${styles.incorrectBtn} ${
-                                        subMark === false
-                                          ? styles.incorrectBtnActive
-                                          : ""
+                                        subMark === false ? styles.incorrectBtnActive : ""
                                       }`}
                                       onClick={() =>
                                         handleMark(sIndex, aIndex, false, true, subIndex)

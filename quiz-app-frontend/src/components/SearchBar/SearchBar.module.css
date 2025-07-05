@@ -3,7 +3,7 @@
 }
 
 .searchInputArea {
-  background-color: #007bff;
+  background-color: #f0f0f0;
   max-width: 324%;
   position: absolute;
   left: 0;
@@ -102,5 +102,83 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+/* ======= Responsivt: max 768px ======= */
+@media (max-width: 768px) {
+  .searchInputArea {
+    width: clamp(200px, 80vw, 90%);
+    padding: 0.75rem;
+    border-radius: 10px;
+  }
+
+  .searchInput {
+    font-size: 0.9rem;
+    padding: 0.4rem;
+  }
+
+  .searchResultItem {
+    padding: 0.4rem 0;
+  }
+
+  .liveQuizIndicator {
+    font-size: 16px;
+    margin-top: 6px;
+  }
+
+  .expandedActions {
+    width: 130px;
+    gap: 0.4rem;
+  }
+
+  .searchResultItem .expandedActions button {
+    font-size: 14px;
+    padding: 3px 10px;
+    max-width: 90px;
+  }
+
+  .noResultsMessage {
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* ======= Responsivt: max 500px ======= */
+@media (max-width: 500px) {
+  .searchInputArea {
+    width: 100%;
+    padding: 0.5rem;
+    border-radius: 8px;
+  }
+
+  .searchInput {
+    font-size: 0.8rem;
+    padding: 0.3rem;
+  }
+
+  .searchResultItem {
+    padding: 0.3rem 0;
+  }
+
+  .liveQuizIndicator {
+    font-size: 14px;
+    margin-top: 4px;
+  }
+
+  .expandedActions {
+    width: 100px;
+    gap: 0.3rem;
+  }
+
+  .searchResultItem .expandedActions button {
+    font-size: 12px;
+    padding: 2px 8px;
+    max-width: 80px;
+  }
+
+  .noResultsMessage {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8rem;
   }
 }

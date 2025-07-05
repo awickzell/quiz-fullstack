@@ -5,11 +5,10 @@ import cors from 'cors';
 import bodyParser from 'body-parser';
 import http from 'http';
 import { Server } from 'socket.io';
-
 import userRoutes from './routes/user.js';
 import quizRoutes from './routes/quiz.js';
 import { scheduler } from './utils/scheduler.js';
-import { setupLiveQuizHandlers } from './socketHandlers/liveQuiz.js'; // 👈 Lägg till
+import { setupLiveQuizHandlers } from './socketHandlers/liveQuiz.js';
 
 dotenv.config();
 
@@ -23,7 +22,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: '*', // Justera vid deployment
+    origin: '*',
     methods: ['GET', 'POST']
   }
 });
@@ -51,7 +50,7 @@ app.use((req, res) => {
 
 io.on('connection', (socket) => {
   console.log(`📡 Ny användare ansluten: ${socket.id}`);
-  setupLiveQuizHandlers(io, socket); // 👈 Ny modul hanterar all socketlogik
+  setupLiveQuizHandlers(io, socket);
 });
 
 // -----------------------------------------------------------

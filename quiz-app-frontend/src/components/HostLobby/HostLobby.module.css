@@ -20,3 +20,42 @@
   margin: 16px auto 0;
   padding: 12px;
 }
+/* ======= RESPONSIVE STYLES ======= */
+
+/* Max 768px */
+@media (max-width: 768px) {
+  .lobbyContainer {
+    padding: 24px 12px;
+    border-radius: 60px;
+    margin: 24px auto 0;
+  }
+
+  .lobbyContainer h2 {
+    font-size: 26px;
+  }
+
+  .lobbyContainer button {
+    width: 70%;
+    font-size: 15px;
+    padding: 10px;
+  }
+}
+
+/* Max 500px */
+@media (max-width: 500px) {
+  .lobbyContainer {
+    padding: 16px 8px;
+    border-radius: 40px;
+    margin: 16px auto 0;
+  }
+
+  .lobbyContainer h2 {
+    font-size: 22px;
+  }
+
+  .lobbyContainer button {
+    width: 90%;
+    font-size: 14px;
+    padding: 8px;
+  }
+}

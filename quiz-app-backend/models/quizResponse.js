@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 const answerSchema = new mongoose.Schema({
   questionText: String,
   answer: String,
+  responseTime: Number,
   subAnswers: [
     {
       subQuestionText: String,

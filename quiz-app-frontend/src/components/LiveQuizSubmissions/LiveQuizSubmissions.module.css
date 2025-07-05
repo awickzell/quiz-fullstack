@@ -138,36 +138,70 @@
   background-color: #0056b3;
 }
 
-/* ======= Responsivt: max 768px ======= */
+.answerTime {
+  margin-left: 65%;
+  position: relative;
+  width: 40px;
+  height: 40px;
+  font-size: 20px;
+  background-color: #f0f0f0;
+  border-radius: 50%;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: default;
+}
+
+.answerTime::after {
+  display: none;
+  content: attr(data-time);
+  position: absolute;
+  top: 50%;
+  right: 140%;
+  transform: translateY(-50%);
+  background: white;
+  color: black;
+  padding: 4px 8px;
+  font-size: 13px;
+  border-radius: 6px;
+  white-space: nowrap;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.15);
+  z-index: 10;
+}
+
+.answerTime:hover::after {
+  display: block;
+}
+
+/* Max 768px  */
+
 @media (max-width: 768px) {
-  .submissionsContainer {
-    max-width: 90%;
-    padding: 24px 12px;
-    border-radius: 60px;
+  .answerTime {
+    margin-left: 65% !important;
+    all: unset;
+    display: inline-flex;
+    align-items: center;
+    font-size: 14px;
   }
 
-  .submissionsTitle {
-    font-size: 36px;
-    margin-bottom: 24px;
+  .answerTime::after {
+    display: inline;
+    position: static;
+    transform: none;
+    background: none;
+    color: #444;
+    padding: 0;
+    font-size: 14px;
   }
 
-  .submissionPlayer {
-    font-size: 18px;
-    margin-bottom: 12px;
-  }
-
-  .buttonGroup {
-    gap: 80px;
-  }
-
-  .backButton {
-    width: 60%;
-    font-size: 16px;
-    padding: 12px 0;
+  .answerTime:hover::after {
+    display: inline;
   }
 }
 
-/* ======= Responsivt: max 500px ======= */
+/* Max 500px  */
+
 @media (max-width: 500px) {
   .submissionsContainer {
     padding: 20px 12px;
@@ -222,5 +256,16 @@
     padding: 12px 0;
     border-radius: 20px;
     margin: 24px auto 0;
+  }
+
+  .answerTime {
+    margin-left: 65% !important;
+    font-size: 16px;
+    width: 32px;
+    height: 32px;
+  }
+
+  .answerTime::after {
+    font-size: 12px;
   }
 }

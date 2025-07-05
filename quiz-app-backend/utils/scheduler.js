@@ -2,14 +2,17 @@ import User from '../models/user.js';
 
 export const scheduler = () => {
   setInterval(async () => {
-    const cutoff = new Date();
-    cutoff.setHours(cutoff.getHours() - 24);
+    try {
+      const cutoff = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
 
-    await User.deleteMany({
-      role: 'Player',
-      createdAt: { $lt: cutoff },
-    });
+      const result = await User.deleteMany({
+        createdAt: { $lt: cutoff },
+      });
 
-    console.log('Spelare som varit inaktiva längre än 24 timmar har tagits bort.');
-  }, 60 * 60 * 1000);
+      console.log(`[SCHEDULER] Cutoff (UTC): ${cutoff.toISOString()}`);
+      console.log(`[SCHEDULER] ${result.deletedCount} användare togs bort.`);
+    } catch (err) {
+      console.error(`[SCHEDULER] Fel vid borttagning: ${err.message}`);
+    }
+  }, 24 * 60 * 60 * 1000);
 };

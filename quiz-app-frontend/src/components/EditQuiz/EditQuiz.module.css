@@ -193,3 +193,108 @@
 .editQuizContainer button {
   font-family: inherit;
 }
+
+/* ======= RESPONSIVE STYLES ======= */
+
+/* Max 768px */
+@media (max-width: 768px) {
+  .editQuizContainer {
+    padding: 24px 12px;
+    border-radius: 60px;
+    margin: 20px auto 0;
+    max-width: 93%;
+  }
+
+  .editQuizContainer h2 {
+    font-size: 48px;
+  }
+
+  .editQuestionBlock {
+    padding: 20px;
+    border-radius: 24px;
+  }
+
+  .quizTitleInput,
+  .questionTextInput,
+  .optionInput,
+  .subQuestionInput,
+  .questionTypeSelect,
+  .imageUploadInput {
+    font-size: 15px;
+    padding: 8px;
+  }
+
+  .primaryButton,
+  .secondaryButton,
+  .addOptionButton,
+  .addSubQuestionButton,
+  .addQuestionButton {
+    max-width: 180px;
+    font-size: 15px;
+  }
+
+  .imagePreview {
+    width: 100px;
+  }
+
+  .removeOptionButton,
+  .removeSubQuestionButton,
+  .removeQuestionButton,
+  .removeImageButton {
+    font-size: 16px;
+  }
+}
+
+/* Max 500px */
+@media (max-width: 500px) {
+  .editQuizContainer {
+    padding: 16px 8px;
+    border-radius: 40px;
+    margin: 16px auto 0;
+    max-width: 93%;
+  }
+
+  .editQuizContainer h2 {
+    font-size: 36px;
+  }
+
+  .editQuestionBlock {
+    padding: 16px;
+    border-radius: 20px;
+  }
+
+  .quizTitleInput,
+  .questionTextInput,
+  .optionInput,
+  .subQuestionInput,
+  .questionTypeSelect,
+  .imageUploadInput {
+    font-size: 14px;
+    padding: 6px;
+  }
+
+  .primaryButton,
+  .secondaryButton,
+  .addOptionButton,
+  .addSubQuestionButton,
+  .addQuestionButton {
+    max-width: 160px;
+    font-size: 14px;
+  }
+
+  .imagePreview {
+    width: 80px;
+  }
+
+  .questionButtons {
+    max-width: 180px;
+  }
+
+  .removeOptionButton,
+  .removeSubQuestionButton,
+  .removeQuestionButton,
+  .removeImageButton {
+    font-size: 14px;
+    padding: 4px;
+  }
+}

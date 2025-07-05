@@ -1,4 +1,5 @@
 import QuizResponse from '../models/quizResponse.js';
+import { startTimer, stopTimer, clearTimers } from '../utils/timerManager.js';
 
 const liveQuizSessions = new Map();
 
@@ -74,21 +75,26 @@ export const setupLiveQuizHandlers = (io, socket) => {
     io.to(quizId).emit('quiz-started');
 
     const firstQuestion = session.quiz.questions[0];
+    const questionIndex = 0;
 
-    const emitQuestion = (socketId) => {
+    const emitQuestion = (socketId, playerId) => {
       io.to(socketId).emit('show-question', firstQuestion);
       io.to(socketId).emit('question-metadata', {
         currentIndex: 1,
         total: session.quiz.questions.length,
       });
+
+      if (playerId !== 'HOST') {
+        startTimer(quizId, playerId, questionIndex);
+      }
     };
 
-    for (const player of session.players.values()) {
-      emitQuestion(player.socketId);
+    for (const [playerId, player] of session.players.entries()) {
+      emitQuestion(player.socketId, playerId);
     }
 
     if (session.hostSocketId) {
-      emitQuestion(session.hostSocketId);
+      emitQuestion(session.hostSocketId, 'HOST');
     }
   });
 
@@ -107,6 +113,8 @@ export const setupLiveQuizHandlers = (io, socket) => {
       currentIndex: session.currentQuestionIndex + 1,
       total: session.quiz.questions.length,
     });
+
+    startTimer(quizId, playerId, session.currentQuestionIndex);
   });
 
   socket.on('next-question', ({ quizId, questionIndex }) => {
@@ -119,20 +127,24 @@ export const setupLiveQuizHandlers = (io, socket) => {
     session.currentQuestionIndex = questionIndex;
     session.currentQuestionAnswers = new Map();
 
-    const emitQuestion = (socketId) => {
+    const emitQuestion = (socketId, playerId) => {
       io.to(socketId).emit('show-question', question);
       io.to(socketId).emit('question-metadata', {
         currentIndex: questionIndex + 1,
         total: session.quiz.questions.length,
       });
+
+      if (playerId !== 'HOST') {
+        startTimer(quizId, playerId, questionIndex);
+      }
     };
 
-    for (const player of session.players.values()) {
-      emitQuestion(player.socketId);
+    for (const [playerId, player] of session.players.entries()) {
+      emitQuestion(player.socketId, playerId);
     }
 
     if (session.hostSocketId) {
-      emitQuestion(session.hostSocketId);
+      emitQuestion(session.hostSocketId, 'HOST');
     }
   });
 
@@ -143,9 +155,15 @@ export const setupLiveQuizHandlers = (io, socket) => {
     if (!session || !player) return;
     if (session.currentQuestionAnswers.has(playerId)) return;
 
-    session.currentQuestionAnswers.set(playerId, answerData);
+    const questionIndex = session.currentQuestionIndex;
+    const responseTimeMs = stopTimer(quizId, playerId, questionIndex);
 
-    const question = session.quiz.questions[session.currentQuestionIndex];
+    session.currentQuestionAnswers.set(playerId, {
+      ...answerData,
+      responseTime: responseTimeMs,
+    });
+
+    const question = session.quiz.questions[questionIndex];
 
     let playerEntry = session.answers.find(entry => entry.playerName === player.playerName);
     if (!playerEntry) {
@@ -158,6 +176,7 @@ export const setupLiveQuizHandlers = (io, socket) => {
 
     playerEntry.answerData.push({
       ...answerData,
+      responseTime: responseTimeMs,
       questionId: answerData.questionId || question?._id || null,
     });
 
@@ -190,7 +209,7 @@ export const setupLiveQuizHandlers = (io, socket) => {
           return {
             questionText: question?.questionText || 'Okänd fråga',
             answer: ans.answer || '',
-            correct: ans.correct ?? false,
+            responseTime: ans.responseTime ?? null,
             subAnswers: Array.isArray(ans.subAnswers)
               ? ans.subAnswers.map(sub => ({
                   subQuestionText: sub.subQuestionText || '',
@@ -210,6 +229,7 @@ export const setupLiveQuizHandlers = (io, socket) => {
         await newResponse.save();
       }
 
+      clearTimers(quizId);
       io.to(quizId).emit('quiz-ended', { summary: session.answers });
       liveQuizSessions.delete(quizId);
     } catch (error) {

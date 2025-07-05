@@ -157,3 +157,117 @@
   margin-top: 1rem;
   font-weight: bold;
 }
+
+/* ======= RESPONSIVE STYLES ======= */
+
+/* Max 768px */
+
+@media (max-width: 768px) {
+  .createQuizContainer {
+    padding: 24px 12px;
+    border-radius: 60px;
+    margin: 20px auto 0;
+  }
+
+  .inputTitle,
+  .questionTextInput,
+  .questionTypeSelect,
+  .optionsSection input,
+  .subQuestionBlock input {
+    width: 90%;
+    font-size: 15px;
+  }
+
+  .checkboxLabel {
+    font-size: 18px;
+  }
+
+  .checkboxLabel > div {
+    font-size: 18px;
+  }
+
+  .customCheckbox {
+    width: 18px;
+    height: 18px;
+  }
+
+  .questionBlock {
+    width: 90%;
+    padding: 0.75rem;
+  }
+
+  .imageUploadSection img.uploaded-image {
+    max-width: 150px;
+  }
+
+  .questionControls {
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: center;
+  }
+
+  .submitButton,
+  .backButton {
+    width: 80%;
+    font-size: 15px;
+  }
+}
+/* Max 500px */
+@media (max-width: 500px) {
+  .createQuizContainer {
+    padding: 16px 8px;
+    border-radius: 40px;
+    margin: 16px auto 0;
+  }
+
+  .inputTitle,
+  .questionTextInput,
+  .questionTypeSelect,
+  .optionsSection input,
+  .subQuestionBlock input {
+    width: 100%;
+    font-size: 14px;
+  }
+
+  .checkboxLabel {
+    font-size: 16px;
+    flex-wrap: wrap;
+    text-align: center;
+    justify-content: center;
+  }
+
+  .checkboxLabel > div {
+    font-size: 16px;
+  }
+
+  .customCheckbox {
+    width: 16px;
+    height: 16px;
+  }
+
+  .questionBlock {
+    width: 100%;
+    padding: 0.75rem;
+  }
+
+  .imageUploadSection img.uploaded-image {
+    max-width: 100%;
+  }
+
+  .questionControls {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .submitButton,
+  .backButton {
+    width: 100%;
+    font-size: 14px;
+  }
+
+  .feedbackMessage {
+    font-size: 14px;
+    text-align: center;
+  }
+}

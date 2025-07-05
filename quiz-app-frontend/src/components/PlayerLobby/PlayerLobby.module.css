@@ -37,3 +37,43 @@
     transform: scale(1);
   }
 }
+
+/* ======= Responsivt: max 768px ======= */
+@media (max-width: 768px) {
+  .lobbyContainer {
+    padding: 24px 16px;
+    border-radius: 80px;
+    margin: 25px auto 0;
+  }
+
+  .lobbyContainer h2 {
+    font-size: 26px;
+    margin-bottom: 20px;
+  }
+
+  .lobbyContainer button {
+    width: 60%;
+    padding: 10px;
+    margin-top: 12px;
+  }
+}
+
+/* ======= Responsivt: max 500px ======= */
+@media (max-width: 500px) {
+  .lobbyContainer {
+    padding: 16px 12px;
+    border-radius: 60px;
+    margin: 20px auto 0;
+  }
+
+  .lobbyContainer h2 {
+    font-size: 22px;
+    margin-bottom: 16px;
+  }
+
+  .lobbyContainer button {
+    width: 80%;
+    padding: 8px;
+    margin-top: 10px;
+  }
+}

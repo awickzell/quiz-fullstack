@@ -3,34 +3,31 @@ import styles from './QuestionBox.module.css';
 
 const QuestionBox = ({ question, index, isHost = false }) => {
   return (
-    <div className={styles.questionBox}>
-      <h2 className={styles.questionTitle}>
-        Fråga {index + 1}: {question.questionText}
-      </h2>
-
-      {question.type === 'multipleChoice' && Array.isArray(question.options) && (
-        <ul className={styles.questionOptions}>
-          {question.options.map((option, i) => (
-            <li key={i} className={styles.questionOption}>{option}</li>
-          ))}
-        </ul>
-      )}
-
-      {question.type === 'text' && !isHost && (
-        <p>Skriv ditt svar här...</p>
-      )}
-
-      {question.subQuestions?.length > 0 && (
-        <div className={styles.subQuestions}>
-          <ul>
-            {question.subQuestions.map((subQ, i) => (
-              <li key={i} className={styles.subQuestionItem}>{subQ.questionText}</li>
+  <div className={styles.questionBox}>
+      
+      <div className={styles.combinedQuestions}>
+        <ul>
+          {[question, ...(question.subQuestions || [])].map((q, i) => (
+            <li key={i} className={styles.subQuestionItem}>
+              <strong>{String.fromCharCode(65 + i)}.</strong> {q.questionText}
+              </li>
             ))}
-          </ul>
-        </div>
-      )}
-    </div>
-  );
+            </ul>
+            </div>
+            
+            {question.type === 'multipleChoice' && Array.isArray(question.options) && (
+              <ul className={styles.questionOptions}>
+                {question.options.map((option, i) => (
+                  <li key={i} className={styles.questionOption}>{option}</li>
+                  ))}
+                  </ul>
+                )}
+                
+                {question.type === 'text' && !isHost && (
+                  <p>Skriv ditt svar här...</p>
+                  )}
+                  </div>
+                  );
 };
 
 export default QuestionBox;

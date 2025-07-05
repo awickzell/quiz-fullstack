@@ -6,6 +6,9 @@ import styles from "./DeleteQuiz.module.css";
 const DeleteQuiz = ({ token }) => {
   const [quizzes, setQuizzes] = useState([]);
   const [message, setMessage] = useState("");
+  const [showModal, setShowModal] = useState(false);
+  const [selectedQuizId, setSelectedQuizId] = useState(null);
+  const [selectedQuizTitle, setSelectedQuizTitle] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -25,21 +28,28 @@ const DeleteQuiz = ({ token }) => {
     fetchQuizzes();
   }, [token]);
 
-  const handleDelete = async (quizId) => {
-    const confirmDelete = window.confirm("Är du säker på att du vill radera detta quiz?");
-    if (!confirmDelete) return;
+  const handleDeleteClick = (quizId, quizTitle) => {
+    setSelectedQuizId(quizId);
+    setSelectedQuizTitle(quizTitle);
+    setShowModal(true);
+  };
 
+  const handleConfirmDelete = async () => {
     try {
-      await axios.delete(`${import.meta.env.VITE_API_URL}/quizzes/${quizId}`, {
+      await axios.delete(`${import.meta.env.VITE_API_URL}/quizzes/${selectedQuizId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      setQuizzes(quizzes.filter((quiz) => quiz._id !== quizId));
+      setQuizzes(quizzes.filter((quiz) => quiz._id !== selectedQuizId));
       setMessage("Quiz raderat.");
     } catch (err) {
       console.error("Fel vid radering:", err);
       setMessage("Kunde inte radera quiz.");
+    } finally {
+      setShowModal(false);
+      setSelectedQuizId(null);
+      setSelectedQuizTitle("");
     }
   };
 
@@ -56,7 +66,7 @@ const DeleteQuiz = ({ token }) => {
               <span>{quiz.title}</span>
               <button
                 className={styles.deleteButton}
-                onClick={() => handleDelete(quiz._id)}
+                onClick={() => handleDeleteClick(quiz._id, quiz.title)}
               >
                 Radera
               </button>
@@ -64,9 +74,23 @@ const DeleteQuiz = ({ token }) => {
           ))}
         </ul>
       )}
+
       <button className={styles.backButton} onClick={() => navigate("/dashboard")}>
         Tillbaka
       </button>
+
+      {showModal && (
+        <div className={styles.modalBackdrop}>
+          <div className={styles.modal}>
+            <h3>Bekräfta radering</h3>
+            <p>Vill du verkligen radera quizet <strong>"{selectedQuizTitle}"</strong>? Detta går inte att ångra.</p>
+            <div className={styles.modalButtons}>
+              <button className={styles.confirmButton} onClick={handleConfirmDelete}>Radera</button>
+              <button className={styles.cancelButton} onClick={() => setShowModal(false)}>Avbryt</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

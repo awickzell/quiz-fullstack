@@ -16,7 +16,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: () => crypto.randomBytes(128).toString('hex'),
   },
-});
+}, { timestamps: true });
 
 userSchema.pre('save', async function (next) {
   if (this.isModified('password')) {
