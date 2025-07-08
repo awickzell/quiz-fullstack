@@ -25,37 +25,36 @@ const LiveQuizHost = () => {
         const res = await axios.get(`${import.meta.env.VITE_API_URL}/quizzes/${quizId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        setQuiz(res.data.quiz);
+        const loadedQuiz = res.data.quiz;
+        setQuiz(loadedQuiz);
+
+        if (socket) {
+          socket.emit('host-quiz', { quizId, quizData: loadedQuiz });
+          socket.emit('start-quiz', { quizId });
+        }
       } catch (err) {
         console.error('Kunde inte hämta quiz:', err);
       }
     };
-    fetchQuiz();
-  }, [quizId, token]);
 
-  useEffect(() => {
-    if (socket && quiz) {
-      socket.emit('start-quiz', { quizId });
+    if (quizId && token) {
+      fetchQuiz();
     }
-  }, [socket, quizId, quiz]);
+  }, [quizId, token, socket]);
 
   useEffect(() => {
     if (!socket) return;
 
-    socket.emit('host-quiz', { quizId, quizData: quiz });
-
     socket.on('lobby-update', ({ players }) => {
-      setPlayers(players); 
+      setPlayers(players);
       setTotalPlayers(players.length);
     });
-
 
     socket.on('answer-count-update', ({ count, totalPlayers, answeredPlayers }) => {
       setAnswerCount(count);
       setTotalPlayers(totalPlayers);
       setAnsweredPlayerIds(answeredPlayers || []);
     });
-
 
     socket.on('quiz-started', () => {
       setQuizStarted(true);
@@ -69,7 +68,7 @@ const LiveQuizHost = () => {
       socket.off('answer-count-update');
       socket.off('quiz-started');
     };
-  }, [socket, quizId, quiz]);
+  }, [socket]);
 
   const handleQuestionClick = (index) => {
     if (!quiz || !socket) return;
@@ -105,17 +104,19 @@ const LiveQuizHost = () => {
               Antal svar: {answerCount} / {totalPlayers}
             </p>
 
-
             <div className={styles.answeredPlayers}>
               {players.map((playerName, idx) => (
-                <span key={`${playerName}-${idx}`}
-                className={`${styles.playerName} ${
-                  answeredPlayerIds.includes(playerName) ? styles.answered : styles.notAnswered
-                }`}
+                <span
+                  key={`${playerName}-${idx}`}
+                  className={`${styles.playerName} ${
+                    answeredPlayerIds.includes(playerName)
+                      ? styles.answered
+                      : styles.notAnswered
+                  }`}
                 >
                   {playerName}
-                  </span>
-                ))}
+                </span>
+              ))}
             </div>
 
             {currentQuestion && (
@@ -127,7 +128,9 @@ const LiveQuizHost = () => {
             {quiz.questions.map((q, i) => (
               <div
                 key={i}
-                className={`${styles.questionButton} ${currentIndex - 1 === i ? styles.active : ''}`}
+                className={`${styles.questionButton} ${
+                  currentIndex - 1 === i ? styles.active : ''
+                }`}
                 onClick={() => handleQuestionClick(i)}
               >
                 Fråga {i + 1}

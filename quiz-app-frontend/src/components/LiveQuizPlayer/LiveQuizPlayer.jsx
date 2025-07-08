@@ -79,7 +79,7 @@ const LiveQuizPlayer = () => {
     };
 
     const handleQuizEnded = () => {
-      setWaitingText('Quizet har avslutats av värden.');
+      setWaitingText('Quizet har avslutats');
       setQuestion(null);
 
       setTimeout(() => {
@@ -167,7 +167,7 @@ const LiveQuizPlayer = () => {
               value={answer}
               onChange={(e) => setAnswer(e.target.value)}
               disabled={answerConfirmed}
-              placeholder="Skriv ditt svar här..."
+              placeholder="Ditt svar..."
             />
           ) : question.type === 'image' && question.imageUrl ? (
             <div className={styles.imageQuestionWrapper}>
@@ -181,7 +181,7 @@ const LiveQuizPlayer = () => {
                 value={answer}
                 onChange={(e) => setAnswer(e.target.value)}
                 disabled={answerConfirmed}
-                placeholder="Skriv ditt svar här..."
+                placeholder="Ditt svar..."
               />
             </div>
           ) : null}
@@ -196,7 +196,7 @@ const LiveQuizPlayer = () => {
                     value={subAnswers[idx]}
                     onChange={(e) => handleSubAnswerChange(idx, e.target.value)}
                     disabled={answerConfirmed}
-                    placeholder="Skriv ditt svar här..."
+                    placeholder="Ditt svar..."
                   />
                 </div>
               ))}
